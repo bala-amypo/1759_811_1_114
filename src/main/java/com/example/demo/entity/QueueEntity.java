@@ -14,9 +14,10 @@ public class QueueEntity {
     private TokenEntity token;
 
     private Integer position;
+
     private LocalDateTime updatedAt;
 
-    
+    // Getters and Setters
     public Long getId() {
         return id;
     }
