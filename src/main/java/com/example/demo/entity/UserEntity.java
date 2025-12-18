@@ -3,7 +3,10 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(
+    name = "users",
+    uniqueConstraints = @UniqueConstraint(columnNames = "email")
+)
 public class UserEntity {
 
     @Id
@@ -14,7 +17,7 @@ public class UserEntity {
     private String password;
     private String role;
 
-    
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -34,15 +37,15 @@ public class UserEntity {
     public String getPassword() {
         return password;
     }
-    
+ 
     public void setPassword(String password) {
         this.password = password;
     }
-    
+ 
     public String getRole() {
         return role;
     }
-    
+ 
     public void setRole(String role) {
         this.role = role;
     }
