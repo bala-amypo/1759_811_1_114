@@ -14,9 +14,10 @@ public class TokenLogEntity {
     private TokenEntity token;
 
     private String logMessage;
+
     private LocalDateTime loggedAt;
 
-    
+    // Getters and Setters
     public Long getId() {
         return id;
     }
