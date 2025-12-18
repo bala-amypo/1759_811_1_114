@@ -1,34 +1,30 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.ServiceCounter;
+import com.example.demo.entity.ServiceCounterEntity;
 import com.example.demo.service.ServiceCounterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/counters")
+@Tag(name = "Service Counter API")
 public class ServiceCounterController {
 
-    @Autowired
-    private ServiceCounterService serviceCounterService;
+    private final ServiceCounterService service;
 
-    
+    public ServiceCounterController(ServiceCounterService service) {
+        this.service = service;
+    }
+
     @PostMapping
-    public ServiceCounter createCounter(@RequestBody ServiceCounter counter) {
-        return serviceCounterService.createCounter(counter);
+    public ServiceCounterEntity add(@RequestBody ServiceCounterEntity counter) {
+        return service.addCounter(counter);
     }
 
-   
-    @GetMapping
-    public List<ServiceCounter> getAllCounters() {
-        return serviceCounterService.getAllCounters();
-    }
-
- 
     @GetMapping("/active")
-    public List<ServiceCounter> getActiveCounters() {
-        return serviceCounterService.getActiveCounters();
+    public List<ServiceCounterEntity> active() {
+        return service.getActiveCounters();
     }
 }
