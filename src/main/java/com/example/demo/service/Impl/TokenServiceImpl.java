@@ -1,6 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.QueuePositionEntity;
+import com.example.demo.entity.QueueEntity;
 import com.example.demo.entity.ServiceCounterEntity;
 import com.example.demo.entity.TokenEntity;
 import com.example.demo.repository.QueueRepository;
@@ -19,14 +19,14 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository serviceCounterRepository;
     private final TokenLogRepository tokenLogRepository;
-    private final QueuePositionRepository queuePositionRepository;
+    private final QueueRepository queuePositionRepository;
 
     // ⚠️ DO NOT change order – test depends on this
     public TokenServiceImpl(
             TokenRepository tokenRepository,
             ServiceCounterRepository serviceCounterRepository,
             TokenLogRepository tokenLogRepository,
-            QueuePositionRepository queuePositionRepository
+            QueueRepository queuePositionRepository
     ) {
         this.tokenRepository = tokenRepository;
         this.serviceCounterRepository = serviceCounterRepository;
@@ -51,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
 
         token = tokenRepository.save(token);
 
-        QueuePositionEntity queue = new QueuePositionEntity();
+        QueueEntity queue = new QueueEntity();
         queue.setToken(token);
         queue.setPosition(1);
         queue.setUpdatedAt(LocalDateTime.now());
