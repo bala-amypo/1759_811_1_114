@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.*;
 
 @Entity
-public class Uas {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
