@@ -3,7 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.QueuePositionEntity;
 import com.example.demo.entity.ServiceCounterEntity;
 import com.example.demo.entity.TokenEntity;
-import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.QueueRepository;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
@@ -90,4 +90,4 @@ public class TokenServiceImpl implements TokenService {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
     }
-}`
+}

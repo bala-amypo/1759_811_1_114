@@ -25,4 +25,4 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
     public List<ServiceCounterEntity> getActiveCounters() {
         return serviceCounterRepository.findByIsActiveTrue();
     }
-}`
+}
