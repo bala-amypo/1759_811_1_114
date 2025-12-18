@@ -11,20 +11,21 @@ import com.example.demo.repository.ServiceCounterRepository;
 @Service
 public class ServiceCounterServiceImpl implements ServiceCounterService{
 
-   
+    @Autowired
+    ServiceCounter repo;
 
     @Override
-    public StudentEntity addStudents(StudentEntity student) {
-        return repo.save(student);
+    public ServiceCounter createCounter(ServiceCounter counter) {
+        return repo.save(counter);
     }
 
     @Override
-    public List<StudentEntity> getStudents() {
+    public List<ServiceCounter> getAllCounters() {
         return repo.findAll();
     }
 
     @Override
-    public StudentEntity getStudentById(Long id) {
+    public List<StudentEntity> getStudentById(Long id) {
         return repo.findById(id).orElse(null);
     }
 
