@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "tokenNumber"))
+@Table(
+    name = "tokens",
+    uniqueConstraints = @UniqueConstraint(columnNames = "tokenNumber")
+)
 public class TokenEntity {
 
     @Id
@@ -19,12 +22,14 @@ public class TokenEntity {
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;
 
+    // ENUM inside same file (as requested)
     public enum TokenStatus {
         WAITING,
         SERVING,
         COMPLETED
     }
 
+    // Getters & Setters
     public Long getId() {
         return id;
     }
