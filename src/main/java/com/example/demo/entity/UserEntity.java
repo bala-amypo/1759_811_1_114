@@ -19,9 +19,10 @@ public class UserEntity {
 
     @Column(nullable=false)
     private String password;
+
     private String role="STAFF";
 
-    public StudentEntity(Long id, String name, String email, String password,String role) {
+    public UserEntity(Long id, String name, String email, String password,String role) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -29,7 +30,7 @@ public class UserEntity {
         this.role=role;
     }
 
-    public StudentEntity() {
+    public UserEntity() {
         
     }
     public Long getId(){
