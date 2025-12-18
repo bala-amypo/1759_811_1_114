@@ -12,7 +12,7 @@ import com.example.demo.repository.ServiceCounterRepository;
 public class ServiceCounterServiceImpl implements ServiceCounterService{
 
     @Autowired
-    ServiceCounter repo;
+    ServiceCounterRepository repo;
 
     @Override
     public ServiceCounter createCounter(ServiceCounter counter) {
@@ -25,13 +25,8 @@ public class ServiceCounterServiceImpl implements ServiceCounterService{
     }
 
     @Override
-    public List<StudentEntity> getStudentById(Long id) {
-        return repo.findById(id).orElse(null);
-    }
-
-    @Override
-    public void deleteStudentById(Long id) {
-        repo.deleteById(id);
+    public List<ServiceCounter> getActiveCounters() {
+        return repo.findByIsActiveTrue();
     }
 
 }
