@@ -13,7 +13,7 @@ public class ServiceCounterEntity {
 
     private Boolean isActive;
 
-    // Getters and Setters
+
     public Long getId() {
         return id;
     }

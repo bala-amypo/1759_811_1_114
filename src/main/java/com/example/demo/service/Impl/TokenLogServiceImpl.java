@@ -16,7 +16,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     private final TokenLogRepository tokenLogRepository;
     private final TokenRepository tokenRepository;
 
-    // ⚠️ Order matters – tests depend on this
+    
     public TokenLogServiceImpl(
             TokenLogRepository tokenLogRepository,
             TokenRepository tokenRepository

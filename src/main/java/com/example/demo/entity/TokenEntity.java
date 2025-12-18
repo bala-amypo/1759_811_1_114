@@ -29,7 +29,7 @@ public class TokenEntity {
         COMPLETED
     }
 
-    // Getters & Setters
+    
     public Long getId() {
         return id;
     }

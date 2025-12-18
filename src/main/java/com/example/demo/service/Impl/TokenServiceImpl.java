@@ -21,7 +21,7 @@ public class TokenServiceImpl implements TokenService {
     private final TokenLogRepository tokenLogRepository;
     private final QueueRepository queueRepository;
 
-    // ⚠️ Constructor signature must match requirement
+    
     public TokenServiceImpl(
             TokenRepository tokenRepository,
             ServiceCounterRepository serviceCounterRepository,
@@ -46,7 +46,7 @@ public class TokenServiceImpl implements TokenService {
 
         TokenEntity token = new TokenEntity();
 
-        // ✅ Generate token number directly (no separate utility class)
+    
         token.setTokenNumber(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
 
         token.setStatus(TokenEntity.TokenStatus.WAITING);
@@ -54,7 +54,7 @@ public class TokenServiceImpl implements TokenService {
 
         token = tokenRepository.save(token);
 
-        // Add to queue
+        
         QueueEntity queue = new QueueEntity();
         queue.setToken(token);
         queue.setPosition(1);

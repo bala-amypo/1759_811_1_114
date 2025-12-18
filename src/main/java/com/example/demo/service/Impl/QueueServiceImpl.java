@@ -14,7 +14,6 @@ public class QueueServiceImpl implements QueueService {
     private final QueueRepository queueRepository;
     private final TokenRepository tokenRepository;
 
-    // ⚠️ Order matters
     public QueueServiceImpl(
             QueueRepository queueRepository,
             TokenRepository tokenRepository
