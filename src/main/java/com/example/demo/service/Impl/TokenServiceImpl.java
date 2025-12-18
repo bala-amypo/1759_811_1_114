@@ -1,8 +1,12 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.TokenEntity;
+import com.example.demo.entity.QueuePositionEntity;
 import com.example.demo.entity.ServiceCounterEntity;
-import com.example.demo.repository.*;
+import com.example.demo.entity.TokenEntity;
+import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.ServiceCounterRepository;
+import com.example.demo.repository.TokenLogRepository;
+import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.TokenService;
 import com.example.demo.util.TokenNumberGenerator;
 import org.springframework.stereotype.Service;
@@ -13,27 +17,30 @@ import java.time.LocalDateTime;
 public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
-    private final ServiceCounterRepository counterRepository;
-    private final TokenLogRepository logRepository;
-    private final QueueRepository queueRepository;
+    private final ServiceCounterRepository serviceCounterRepository;
+    private final TokenLogRepository tokenLogRepository;
+    private final QueuePositionRepository queuePositionRepository;
 
+    // ⚠️ DO NOT change order – test depends on this
     public TokenServiceImpl(
             TokenRepository tokenRepository,
-            ServiceCounterRepository counterRepository,
-            TokenLogRepository logRepository,
-            QueueRepository queueRepository) {
-
+            ServiceCounterRepository serviceCounterRepository,
+            TokenLogRepository tokenLogRepository,
+            QueuePositionRepository queuePositionRepository
+    ) {
         this.tokenRepository = tokenRepository;
-        this.counterRepository = counterRepository;
-        this.logRepository = logRepository;
-        this.queueRepository = queueRepository;
+        this.serviceCounterRepository = serviceCounterRepository;
+        this.tokenLogRepository = tokenLogRepository;
+        this.queuePositionRepository = queuePositionRepository;
     }
 
+    @Override
     public TokenEntity issueToken(Long counterId) {
-        ServiceCounterEntity counter = counterRepository.findById(counterId)
+
+        ServiceCounterEntity counter = serviceCounterRepository.findById(counterId)
                 .orElseThrow(() -> new RuntimeException("Counter not found"));
 
-        if (!counter.getIsActive()) {
+        if (!Boolean.TRUE.equals(counter.getIsActive())) {
             throw new RuntimeException("Counter not active");
         }
 
@@ -42,10 +49,21 @@ public class TokenServiceImpl implements TokenService {
         token.setStatus(TokenEntity.TokenStatus.WAITING);
         token.setCreatedAt(LocalDateTime.now());
 
-        return tokenRepository.save(token);
+        token = tokenRepository.save(token);
+
+        QueuePositionEntity queue = new QueuePositionEntity();
+        queue.setToken(token);
+        queue.setPosition(1);
+        queue.setUpdatedAt(LocalDateTime.now());
+
+        queuePositionRepository.save(queue);
+
+        return token;
     }
 
+    @Override
     public TokenEntity updateStatus(Long tokenId, String status) {
+
         TokenEntity token = getToken(tokenId);
         TokenEntity.TokenStatus newStatus =
                 TokenEntity.TokenStatus.valueOf(status);
@@ -56,19 +74,20 @@ public class TokenServiceImpl implements TokenService {
                 newStatus == TokenEntity.TokenStatus.COMPLETED) {
 
             token.setStatus(newStatus);
-        } else {
-            throw new RuntimeException("invalid status");
+
+            if (newStatus == TokenEntity.TokenStatus.COMPLETED) {
+                token.setCompletedAt(LocalDateTime.now());
+            }
+
+            return tokenRepository.save(token);
         }
 
-        if (newStatus == TokenEntity.TokenStatus.COMPLETED) {
-            token.setCompletedAt(LocalDateTime.now());
-        }
-
-        return tokenRepository.save(token);
+        throw new RuntimeException("invalid status");
     }
 
+    @Override
     public TokenEntity getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
     }
-}
+}`
