@@ -1,67 +1,54 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.*;
 
 @Entity
-public class ServiceCounterEntity{
+@Table(name = "service_counter")
+public class ServiceCounter {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String countername;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
+    private String counterName;
+
+    @Column(nullable = false)
     private String department;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private Boolean isActive;
 
-  
 
-    public ServiceCounterEntity(Long id, String countername, String department, Boolean isActive) {
-        this.id = id;
-        this.countername = counterName;
-        this.department = department;
-        this.isActive= isActive;
-        
-    }
-
-    public ServiceCounterEntity() {
-        
-    }
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    public void setId(Long id){
-        this.id=id;
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setCounterName(String name) {
+    public String getCounterName() {
+        return counterName;
+    }
+
+    public void setCounterName(String counterName) {
         this.counterName = counterName;
     }
 
-    public String getCounteName() {
-        return this.counterName;
-    }
-
-    public void setDepartment(String Department) {
-        this.department =department;
-    }
-
     public String getDepartment() {
-        return this.department;
+        return department;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive =isActive;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public Boolean getIsActive() {
-        return this.isActive;
+        return isActive;
     }
-    
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 }

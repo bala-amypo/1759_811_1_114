@@ -1,39 +1,34 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.service.ServiceCounterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
+@RequestMapping("/counters")
 public class ServiceCounterController {
 
     @Autowired
-    ServiceCounterService ser;
+    private ServiceCounterService serviceCounterService;
 
+    // Create a new service counter
     @PostMapping
-    public ServiceCounter createCounter(@RequestBody ServiceCounter counter){
-        return ser.createCounter(counter);
+    public ServiceCounter createCounter(@RequestBody ServiceCounter counter) {
+        return serviceCounterService.createCounter(counter);
     }
-    
+
+    // Get all service counters
     @GetMapping
     public List<ServiceCounter> getAllCounters() {
-        return ser.getAllCounters();
-    }
-    
-    @GetMapping("/active")
-    public List<SserviceCounter> getActiveCounters() {
-        return ser.getActiveCounters();
+        return serviceCounterService.getAllCounters();
     }
 
-    
+    // Get only active counters (eligible for token assignment)
+    @GetMapping("/active")
+    public List<ServiceCounter> getActiveCounters() {
+        return serviceCounterService.getActiveCounters();
+    }
 }
