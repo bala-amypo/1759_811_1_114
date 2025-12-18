@@ -1,30 +1,29 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.QueueEntity;
 import com.example.demo.service.QueueService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/queue")
-@Tag(name = "Queue API")
 public class QueueController {
 
-    private final QueueService service;
+    private final QueueService queueService;
 
-    public QueueController(QueueService service) {
-        this.service = service;
+    public QueueController(QueueService queueService) {
+        this.queueService = queueService;
     }
 
     @PutMapping("/position/{tokenId}/{newPosition}")
-    public QueueEntity update(
+    public String updatePosition(
             @PathVariable Long tokenId,
-            @PathVariable Integer newPosition) {
-        return service.updateQueuePosition(tokenId, newPosition);
+            @PathVariable Integer newPosition
+    ) {
+        queueService.updateQueuePosition(tokenId, newPosition);
+        return "Queue position updated";
     }
 
     @GetMapping("/position/{tokenId}")
-    public QueueEntity get(@PathVariable Long tokenId) {
-        return service.getPosition(tokenId);
+    public Integer getPosition(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
     }
 }
