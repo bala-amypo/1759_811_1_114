@@ -24,13 +24,13 @@ public class ServiceCounterEntity{
 
     public ServiceCounterEntity(Long id, String countername, String department, Boolean isActive) {
         this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password= password;
-        this.role=role;
+        this.countername = countername;
+        this.department = department;
+        this.isActive= isActive;
+        
     }
 
-    public UserEntity() {
+    public ServiceCounterEntity() {
         
     }
     public Long getId(){
@@ -40,34 +40,28 @@ public class ServiceCounterEntity{
         this.id=id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCounterName(String name) {
+        this.countername = countername;
     }
 
-    public String getName() {
-        return this.name;
+    public String getCounteName() {
+        return this.countername;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDepartment(String Department) {
+        this.department =department;
     }
 
-    public String getEmail() {
-        return this.email;
+    public String getDepartment() {
+        return this.department;
     }
 
-    public void setpasssword(String password) {
-        this.password =password;
+    public void setIsActive(Boolean isActive) {
+        this.isActive =isActive;
     }
 
-    public String getpassword() {
-        return this.password;
+    public Boolean getIsActive() {
+        return this.isActive;
     }
-    public void setrole(String role) {
-        this.role=role;
-    }
-
-    public String getrole() {
-        return this.role;
-    }
+    
 }
