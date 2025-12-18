@@ -8,10 +8,10 @@ import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.TokenService;
-import com.example.demo.util.TokenNumberGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -19,19 +19,19 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository serviceCounterRepository;
     private final TokenLogRepository tokenLogRepository;
-    private final QueueRepository queuePositionRepository;
+    private final QueueRepository queueRepository;
 
-    // ⚠️ DO NOT change order – test depends on this
+    // ⚠️ Constructor signature must match requirement
     public TokenServiceImpl(
             TokenRepository tokenRepository,
             ServiceCounterRepository serviceCounterRepository,
             TokenLogRepository tokenLogRepository,
-            QueueRepository queuePositionRepository
+            QueueRepository queueRepository
     ) {
         this.tokenRepository = tokenRepository;
         this.serviceCounterRepository = serviceCounterRepository;
         this.tokenLogRepository = tokenLogRepository;
-        this.queuePositionRepository = queuePositionRepository;
+        this.queueRepository = queueRepository;
     }
 
     @Override
@@ -45,18 +45,22 @@ public class TokenServiceImpl implements TokenService {
         }
 
         TokenEntity token = new TokenEntity();
-        token.setTokenNumber(TokenNumberGenerator.generateTokenNumber());
+
+        // ✅ Generate token number directly (no separate utility class)
+        token.setTokenNumber(UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+
         token.setStatus(TokenEntity.TokenStatus.WAITING);
         token.setCreatedAt(LocalDateTime.now());
 
         token = tokenRepository.save(token);
 
+        // Add to queue
         QueueEntity queue = new QueueEntity();
         queue.setToken(token);
         queue.setPosition(1);
         queue.setUpdatedAt(LocalDateTime.now());
 
-        queuePositionRepository.save(queue);
+        queueRepository.save(queue);
 
         return token;
     }
