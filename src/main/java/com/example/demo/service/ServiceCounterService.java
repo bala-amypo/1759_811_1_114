@@ -6,12 +6,11 @@ import com.example.demo.entity.ServiceCounter;
 
 public interface ServiceCounterService {
 
-    public ServiceCiunter createCounter(S student);
+    public ServiceCounter createCounter(ServiceCounter counter);
 
-    public List<StudentEntity> getStudents();
+    public List<ServiceCounter> getAllCounters();
 
-    public StudentEntity getStudentById(Long id);
+    public List<ServiceCounter> getActiveCounters();
 
-    public void deleteStudentById(Long id);
-
+  
 }
