@@ -24,7 +24,7 @@ public class ServiceCounterEntity{
 
     public ServiceCounterEntity(Long id, String countername, String department, Boolean isActive) {
         this.id = id;
-        this.countername = countername;
+        this.countername = counterName;
         this.department = department;
         this.isActive= isActive;
         
@@ -41,11 +41,11 @@ public class ServiceCounterEntity{
     }
 
     public void setCounterName(String name) {
-        this.countername = countername;
+        this.counterName = counterName;
     }
 
     public String getCounteName() {
-        return this.countername;
+        return this.counterName;
     }
 
     public void setDepartment(String Department) {
