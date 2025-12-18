@@ -13,17 +13,21 @@ import java.util.List;
 @Service
 public class TokenLogServiceImpl implements TokenLogService {
 
-    private final TokenLogRepository logRepository;
+    private final TokenLogRepository tokenLogRepository;
     private final TokenRepository tokenRepository;
 
+    // ⚠️ Order matters – tests depend on this
     public TokenLogServiceImpl(
-            TokenLogRepository logRepository,
-            TokenRepository tokenRepository) {
-        this.logRepository = logRepository;
+            TokenLogRepository tokenLogRepository,
+            TokenRepository tokenRepository
+    ) {
+        this.tokenLogRepository = tokenLogRepository;
         this.tokenRepository = tokenRepository;
     }
 
+    @Override
     public TokenLogEntity addLog(Long tokenId, String message) {
+
         TokenEntity token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
@@ -32,10 +36,11 @@ public class TokenLogServiceImpl implements TokenLogService {
         log.setLogMessage(message);
         log.setLoggedAt(LocalDateTime.now());
 
-        return logRepository.save(log);
+        return tokenLogRepository.save(log);
     }
 
+    @Override
     public List<TokenLogEntity> getLogs(Long tokenId) {
-        return logRepository.findByTokenId(tokenId);
+        return tokenLogRepository.findByTokenId(tokenId);
     }
 }
