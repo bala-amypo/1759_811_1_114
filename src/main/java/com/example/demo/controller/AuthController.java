@@ -4,8 +4,10 @@ import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag(name = "Authentication")
 @RestController
@@ -14,20 +16,31 @@ public class AuthController {
 
     private final UserService userService;
 
-    // Constructor Injection
     public AuthController(UserService userService) {
         this.userService = userService;
     }
 
+    // ===== Register User =====
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public User register(@Valid @RequestBody User user) {
+    public User register(@RequestBody User user) {
         return userService.register(user);
     }
 
-    @Operation(summary = "Login user (email only, no JWT)")
+    // ===== Login User =====
+    @Operation(summary = "Login user by email")
     @PostMapping("/login")
-    public User login(@RequestBody User user) {
-        return userService.login(user.getEmail());
+    public Map<String, Object> login(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        User user = userService.login(email);
+
+        // Return only safe fields (no password)
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("role", user.getRole());
+
+        return response;
     }
 }
