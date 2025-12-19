@@ -7,7 +7,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.TokenLogRepository;
-import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.QueueRepository;
 import com.example.demo.service.TokenService;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +19,13 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository counterRepository;
     private final TokenLogRepository tokenLogRepository;
-    private final QueuePositionRepository queuePositionRepository;
+    private final QueueRepository queuePositionRepository;
 
     // Constructor injection in exact required order
     public TokenServiceImpl(TokenRepository tokenRepository,
                             ServiceCounterRepository counterRepository,
                             TokenLogRepository tokenLogRepository,
-                            QueuePositionRepository queuePositionRepository) {
+                            QueueRepository queuePositionRepository) {
         this.tokenRepository = tokenRepository;
         this.counterRepository = counterRepository;
         this.tokenLogRepository = tokenLogRepository;
