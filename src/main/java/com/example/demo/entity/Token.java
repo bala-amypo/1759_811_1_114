@@ -1,46 +1,42 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tokens")
 public class Token {
 
+    public enum Status {
+        WAITING, SERVING, COMPLETED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private Long tokenNumber;
+    private Integer tokenNumber;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne
-    @JoinColumn(name = "counter_id")
     private ServiceCounter counter;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime completedAt;
 
-    public enum Status {
-        WAITING, SERVING, COMPLETED
-    }
+    // ===== Getter & Setter for id =====
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    // ===== Getters & Setters =====
-
-    
-
-    public Long getTokenNumber() { return tokenNumber; }
-    public void setTokenNumber(Long tokenNumber) { this.tokenNumber = tokenNumber; }
+    public Integer getTokenNumber() { return tokenNumber; }
+    public void setTokenNumber(Integer tokenNumber) { this.tokenNumber = tokenNumber; }
 
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
