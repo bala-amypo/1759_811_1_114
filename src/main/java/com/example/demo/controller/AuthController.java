@@ -6,9 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Tag(name = "Authentication")
 @RestController
 @RequestMapping("/auth")
@@ -30,17 +27,15 @@ public class AuthController {
     // ===== Login User =====
     @Operation(summary = "Login user by email")
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        User user = userService.login(email);
+    public User login(@RequestBody LoginEmailRequest loginRequest) {
+        return userService.login(loginRequest.getEmail());
+    }
 
-        // Return only safe fields (no password)
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", user.getId());
-        response.put("username", user.getUsername());
-        response.put("email", user.getEmail());
-        response.put("role", user.getRole());
+    // ===== Inner class for login request =====
+    public static class LoginEmailRequest {
+        private String email;
 
-        return response;
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
     }
 }
