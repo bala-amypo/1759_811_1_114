@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
-import com.example.demo.exception.DuplicateResourceException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -21,7 +20,7 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             // MUST contain "Email"
-            throw new DuplicateResourceException("Email already exists");
+            throw new ResourceNotFoundException("Email already exists");
         }
         return userRepository.save(user);
     }
