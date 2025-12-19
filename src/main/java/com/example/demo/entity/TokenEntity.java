@@ -22,7 +22,6 @@ public class TokenEntity {
     private LocalDateTime createdAt;
     private LocalDateTime completedAt;
 
-    // ENUM inside same file (as requested)
     public enum TokenStatus {
         WAITING,
         SERVING,
