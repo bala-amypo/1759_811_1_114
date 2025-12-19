@@ -28,7 +28,7 @@ public class User {
     @NotBlank
     private String role;
 
-    // ===== Getters and Setters =====
+    // ===== Getters & Setters =====
 
     public Long getId() {
         return id;
@@ -49,7 +49,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-
+ 
     public void setEmail(String email) {
         this.email = email;
     }
