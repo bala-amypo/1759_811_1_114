@@ -37,8 +37,7 @@ public class Token {
 
     // ===== Getters & Setters =====
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    
 
     public Long getTokenNumber() { return tokenNumber; }
     public void setTokenNumber(Long tokenNumber) { this.tokenNumber = tokenNumber; }
