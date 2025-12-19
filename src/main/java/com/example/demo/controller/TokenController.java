@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Token;
 import com.example.demo.entity.ServiceCounter;
+import com.example.demo.entity.Token;
 import com.example.demo.entity.User;
+import com.example.demo.service.ServiceCounterService;
 import com.example.demo.service.TokenService;
 import com.example.demo.service.UserService;
-import com.example.demo.service.ServiceCounterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -27,21 +27,25 @@ public class TokenController {
         this.counterService = counterService;
     }
 
+    // ===== Issue a new token =====
     @Operation(summary = "Issue a new token for a user at a counter")
     @PostMapping("/issue/{userId}/{counterId}")
-    public Token issueToken(@PathVariable Long userId, @PathVariable Long counterId) {
-        // ✅ Fixed: fetch user by ID
+    public Token issueToken(@PathVariable Long userId,
+                            @PathVariable Long counterId) {
         User user = userService.getById(userId);
         ServiceCounter counter = counterService.getById(counterId);
         return tokenService.issueToken(user, counter);
     }
 
+    // ===== Update token status =====
     @Operation(summary = "Update token status")
     @PutMapping("/status/{tokenId}")
-    public Token updateStatus(@PathVariable Long tokenId, @RequestParam Token.Status status) {
+    public Token updateStatus(@PathVariable Long tokenId,
+                              @RequestParam Token.Status status) {
         return tokenService.updateStatus(tokenId, status);
     }
 
+    // ===== Get token by ID =====
     @Operation(summary = "Get token by ID")
     @GetMapping("/{tokenId}")
     public Token getToken(@PathVariable Long tokenId) {
