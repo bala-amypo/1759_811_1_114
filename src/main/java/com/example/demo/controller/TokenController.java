@@ -30,7 +30,8 @@ public class TokenController {
     @Operation(summary = "Issue a new token for a user at a counter")
     @PostMapping("/issue/{userId}/{counterId}")
     public Token issueToken(@PathVariable Long userId, @PathVariable Long counterId) {
-        User user = userService.login(userService.loginById(userId).getEmail()); // simplified
+        // ✅ Fixed: fetch user by ID
+        User user = userService.getById(userId);
         ServiceCounter counter = counterService.getById(counterId);
         return tokenService.issueToken(user, counter);
     }

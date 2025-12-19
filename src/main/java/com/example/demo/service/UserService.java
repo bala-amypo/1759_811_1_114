@@ -7,4 +7,7 @@ public interface UserService {
     User register(User user);
 
     User login(String email);
+
+    // ✅ Added method to fetch user by ID
+    User getById(Long userId);
 }

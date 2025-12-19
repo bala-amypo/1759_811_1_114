@@ -6,20 +6,22 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    // REQUIRED constructor signature
+    // Constructor injection
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public User register(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            // MUST contain "Email"
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
             throw new ResourceNotFoundException("Email already exists");
         }
         return userRepository.save(user);
@@ -28,8 +30,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        // MUST contain "not found"
-                        new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public User getById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
