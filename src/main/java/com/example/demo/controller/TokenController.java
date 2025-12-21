@@ -27,7 +27,6 @@ public class TokenController {
         this.counterService = counterService;
     }
 
-    // ===== Issue a new token =====
     @Operation(summary = "Issue a new token for a user at a counter")
     @PostMapping("/issue/{userId}/{counterId}")
     public Token issueToken(@PathVariable Long userId,
@@ -37,7 +36,7 @@ public class TokenController {
         return tokenService.issueToken(user, counter);
     }
 
-    // ===== Update token status =====
+   
     @Operation(summary = "Update token status")
     @PutMapping("/status/{tokenId}")
     public Token updateStatus(@PathVariable Long tokenId,
@@ -45,7 +44,7 @@ public class TokenController {
         return tokenService.updateStatus(tokenId, status);
     }
 
-    // ===== Get token by ID =====
+  
     @Operation(summary = "Get token by ID")
     @GetMapping("/{tokenId}")
     public Token getToken(@PathVariable Long tokenId) {
