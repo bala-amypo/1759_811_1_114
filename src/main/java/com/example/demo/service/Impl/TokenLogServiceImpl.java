@@ -16,7 +16,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     private final TokenLogRepository tokenLogRepository;
     private final TokenRepository tokenRepository;
 
-    // Constructor Injection (required order)
+  
     public TokenLogServiceImpl(TokenLogRepository tokenLogRepository,
                                TokenRepository tokenRepository) {
         this.tokenLogRepository = tokenLogRepository;

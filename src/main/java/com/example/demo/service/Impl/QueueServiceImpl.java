@@ -14,7 +14,7 @@ public class QueueServiceImpl implements QueueService {
     private final QueueRepository queueRepository;
     private final TokenRepository tokenRepository;
 
-    // Constructor injection (required order)
+  
     public QueueServiceImpl(QueueRepository queueRepository, TokenRepository tokenRepository) {
         this.queueRepository = queueRepository;
         this.tokenRepository = tokenRepository;

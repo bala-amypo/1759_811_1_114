@@ -31,16 +31,16 @@ public class TokenServiceImpl implements TokenService {
         this.queueRepository = queueRepository;
     }
 
-    // ===== Issue a new token =====
+    
     @Override
     public Token issueToken(User user, ServiceCounter counter) {
         if (!counter.getIsActive()) {
             throw new RuntimeException("Inactive Counter");
         }
 
-        // Generate token number safely
+      
         long count = tokenRepository.count();
-        int nextTokenNumber = (int) count + 1; // cast long → int
+        int nextTokenNumber = (int) count + 1; 
 
         Token token = new Token();
         token.setTokenNumber(nextTokenNumber);
@@ -52,13 +52,13 @@ public class TokenServiceImpl implements TokenService {
         return tokenRepository.save(token);
     }
 
-    // ===== Update token status =====
+   
     @Override
     public Token updateStatus(Long tokenId, Token.Status newStatus) {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        // Validate status transition
+     
         Token.Status currentStatus = token.getStatus();
         if (currentStatus == Token.Status.WAITING && newStatus != Token.Status.SERVING) {
             throw new RuntimeException("invalid status");
@@ -75,13 +75,12 @@ public class TokenServiceImpl implements TokenService {
             token.setCompletedAt(LocalDateTime.now());
         }
 
-        // Optionally, create a token log here
-        // tokenLogRepository.save(...);
+       
 
         return tokenRepository.save(token);
     }
 
-    // ===== Get token by ID =====
+ 
     @Override
     public Token getById(Long tokenId) {
         return tokenRepository.findById(tokenId)

@@ -13,14 +13,14 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository serviceCounterRepository;
 
-    // Constructor Injection (required)
+  
     public ServiceCounterServiceImpl(ServiceCounterRepository serviceCounterRepository) {
         this.serviceCounterRepository = serviceCounterRepository;
     }
 
     @Override
     public ServiceCounter add(ServiceCounter serviceCounter) {
-        // Default active if not provided
+      
         if (serviceCounter.getIsActive() == null) {
             serviceCounter.setIsActive(true);
         }
