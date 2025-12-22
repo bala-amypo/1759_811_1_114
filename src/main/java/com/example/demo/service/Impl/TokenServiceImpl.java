@@ -48,10 +48,9 @@ public class TokenServiceImpl implements TokenService {
         token.setStatus(Token.Status.WAITING);
         token.setCreatedAt(LocalDateTime.now());
 
-        // ✅ Save token first
         Token savedToken = tokenRepository.save(token);
 
-        // ✅ CREATE QUEUE ENTRY
+        
         Queue queue = new Queue();
         queue.setToken(savedToken);
         queue.setPosition(1);
