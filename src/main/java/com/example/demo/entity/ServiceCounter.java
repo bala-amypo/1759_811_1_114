@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "service_counters")
 public class ServiceCounter {
 
     @Id
@@ -12,51 +11,9 @@ public class ServiceCounter {
 
     private String counterName;
 
-    private String department;
+    // Getters and Setters
+    public Long getId() { return id; }
 
-    private Boolean isActive;
-
-    // No-arg constructor
-    public ServiceCounter() {
-    }
-
-    // Parameterized constructor
-    public ServiceCounter(String counterName, String department, Boolean isActive) {
-        this.counterName = counterName;
-        this.department = department;
-        this.isActive = isActive;
-    }
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public String getCounterName() {
-        return counterName;
-    }
-
-    public void setCounterName(String counterName) {
-        this.counterName = counterName;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean active) {
-        isActive = active;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getCounterName() { return counterName; }
+    public void setCounterName(String counterName) { this.counterName = counterName; }
 }

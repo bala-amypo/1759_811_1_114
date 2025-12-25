@@ -4,24 +4,24 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "token_logs")
 public class TokenLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long tokenId;
+    @ManyToOne
+    private Token token;
+
     private String action;
     private String performedBy;
     private LocalDateTime actionTime;
 
-    // Getters & setters
+    // Getters and Setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public Long getTokenId() { return tokenId; }
-    public void setTokenId(Long tokenId) { this.tokenId = tokenId; }
+    public Token getToken() { return token; }
+    public void setToken(Token token) { this.token = token; }
 
     public String getAction() { return action; }
     public void setAction(String action) { this.action = action; }
