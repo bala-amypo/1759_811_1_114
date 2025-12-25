@@ -21,7 +21,7 @@ public class QueueServiceImpl implements QueueService {
     }
 
     @Override
-    public QueuePosition updatePosition(Long tokenId, int newPosition) throws Exception {
+    public QueuePosition updateQueuePosition(Long tokenId, int newPosition) throws Exception {
         if (newPosition < 1) {
             throw new Exception("Position must be >= 1");
         }

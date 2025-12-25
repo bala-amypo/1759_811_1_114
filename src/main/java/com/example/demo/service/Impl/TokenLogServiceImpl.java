@@ -21,7 +21,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     }
 
     @Override
-    public TokenLog createLog(Long tokenId, String message) throws Exception {
+    public TokenLog addLog(Long tokenId, String message) throws Exception {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new Exception("not found"));
 
