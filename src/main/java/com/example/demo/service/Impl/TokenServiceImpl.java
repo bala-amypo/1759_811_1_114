@@ -63,7 +63,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token updateTokenStatus(Long tokenId, Status newStatus) throws Exception {
+    public Token updateStatus(Long tokenId, Status newStatus) throws Exception {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new Exception("not found"));
 
@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token getTokenById(Long tokenId) throws Exception {
+    public Token getTokenId(Long tokenId) throws Exception {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new Exception("not found"));
         return token;
