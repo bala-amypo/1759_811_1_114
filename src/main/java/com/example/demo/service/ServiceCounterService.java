@@ -1,14 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.ServiceCounter;
-
 import java.util.List;
+import java.util.Optional;
 
 public interface ServiceCounterService {
 
-    ServiceCounter addCounter(ServiceCounter counter);
-
-    List<ServiceCounter> getActiveCounters();
-
-    ServiceCounter getById(Long id);
+    ServiceCounter createCounter(ServiceCounter counter);
+    ServiceCounter updateCounter(Long id, ServiceCounter counter);
+    Optional<ServiceCounter> getCounterById(Long id);
+    List<ServiceCounter> getAllCounters();
+    void deleteCounter(Long id);
 }
