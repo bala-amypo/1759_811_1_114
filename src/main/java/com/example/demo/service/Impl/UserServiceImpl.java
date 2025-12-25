@@ -1,46 +1,27 @@
-package com.example.demo.service.impl;
+package com.example.demo.service.Impl;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    // Constructor Injection
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Override
-    public User register(User user) throws Exception {
-        // Check for duplicate email
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new Exception("Email");
-        }
-        // Default role if not set
-        if (user.getRole() == null) {
-            user.setRole(User.Role.STAFF);
-        }
-        return userRepository.save(user);
-    }
-
-    @Override
-    public User findByEmail(String email) throws Exception {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception("not found");
-        }
-        return user;
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }

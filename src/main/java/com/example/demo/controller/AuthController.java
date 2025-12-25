@@ -1,62 +1,54 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.RegisterRequest;
+import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import com.example.demo.config.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtTokenProvider jwtProvider;
+    @Autowired
+    private UserService userService;
 
-    // Constructor injection
-    public AuthController(UserService userService, JwtTokenProvider jwtProvider) {
-        this.userService = userService;
-        this.jwtProvider = jwtProvider;
-    }
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
-    // Register a new user
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        try {
-            User user = new User();
-            user.setName(request.getName());
-            user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
-
-            User registered = userService.register(user);
-            registered.setPassword(null); // Hide password in response
-            return ResponseEntity.ok(registered);
-        } catch (Exception e) {
-            // Exception message must contain "Email" keyword if duplicate
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
-    // Login and return JWT
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        try {
-            User user = userService.findByEmail(request.getEmail());
-            if (!user.getPassword().equals(request.getPassword())) {
-                throw new Exception("Invalid credentials");
-            }
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        User user = userService.findByEmail(loginRequest.getEmail());
 
-            String token = jwtProvider.generateToken(user);
-            AuthResponse response = new AuthResponse();
-            response.setToken(token);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        if (user == null || !userService.checkPassword(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Invalid email or password");
         }
+
+        String token = jwtTokenProvider.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name()
+        );
+
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    // DTOs
+    public static class LoginRequest {
+        private String email;
+        private String password;
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
+
+    public static class JwtResponse {
+        private String token;
+        public JwtResponse(String token) { this.token = token; }
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
     }
 }
