@@ -3,12 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "users",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
-    }
-)
+@Table(name = "users")
 public class User {
 
     @Id
@@ -18,7 +13,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
@@ -28,29 +23,36 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    // REQUIRED by JPA
-    public User() {
+    public enum Role {
+        ADMIN,
+        STAFF
     }
 
+    // Default constructor
+    public User() {
+        this.role = Role.STAFF; // Default role
+    }
+
+    // Parameterized constructor
     public User(String name, String email, String password, Role role) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = role != null ? role : Role.STAFF;
     }
 
-    // ---------- Getters & Setters ----------
+    // Getters and Setters
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
@@ -60,30 +62,24 @@ public class User {
     public String getEmail() {
         return email;
     }
- 
+
     public void setEmail(String email) {
         this.email = email;
     }
- 
+
     public String getPassword() {
         return password;
     }
- 
+
     public void setPassword(String password) {
         this.password = password;
     }
- 
+
     public Role getRole() {
         return role;
     }
- 
+
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    // ---------- ENUM INSIDE ENTITY ----------
-    public enum Role {
-        ADMIN,
-        STAFF
     }
 }

@@ -43,7 +43,7 @@ public class QueueServiceImpl implements QueueService {
     public QueuePosition getPosition(Long tokenId) throws Exception {
         QueuePosition queuePosition = queueRepository.findByToken_Id(tokenId);
         if (queuePosition == null) {
-            throw new Exception("Queue position not found");
+            throw new Exception("not found");
         }
         return queuePosition;
     }

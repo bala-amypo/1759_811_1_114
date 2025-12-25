@@ -23,7 +23,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     @Override
     public TokenLog createLog(Long tokenId, String message) throws Exception {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new Exception("Token not found"));
+                .orElseThrow(() -> new Exception("not found"));
 
         TokenLog log = new TokenLog(token, message);
         return logRepository.save(log);
@@ -32,7 +32,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     @Override
     public List<TokenLog> getLogs(Long tokenId) throws Exception {
         if (!tokenRepository.existsById(tokenId)) {
-            throw new Exception("Token not found");
+            throw new Exception("not found");
         }
         return logRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
     }

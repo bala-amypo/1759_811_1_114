@@ -38,9 +38,9 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
     @Override
     public ServiceCounter getCounterById(Long id) throws Exception {
         ServiceCounter counter = counterRepository.findById(id)
-                .orElseThrow(() -> new Exception("Counter not found"));
+                .orElseThrow(() -> new Exception("not found"));
         if (!counter.getIsActive()) {
-            throw new Exception("Counter not active");
+            throw new Exception("not active");
         }
         return counter;
     }

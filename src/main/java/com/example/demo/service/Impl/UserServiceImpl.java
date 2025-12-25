@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     public User register(User user) throws Exception {
         // Check for duplicate email
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new Exception("Email already exists");
+            throw new Exception("Email");
         }
         // Default role if not set
         if (user.getRole() == null) {
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) throws Exception {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new Exception("User not found");
+            throw new Exception("not found");
         }
         return user;
     }
