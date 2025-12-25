@@ -1,53 +1,52 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.ServiceCounter;
 import com.example.demo.entity.Token;
-import com.example.demo.entity.User;
-import com.example.demo.service.ServiceCounterService;
 import com.example.demo.service.TokenService;
-import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Tokens")
+import java.util.List;
+
 @RestController
 @RequestMapping("/tokens")
 public class TokenController {
 
-    private final TokenService tokenService;
-    private final UserService userService;
-    private final ServiceCounterService counterService;
+    @Autowired
+    private TokenService tokenService;
 
-    public TokenController(TokenService tokenService,
-                           UserService userService,
-                           ServiceCounterService counterService) {
-        this.tokenService = tokenService;
-        this.userService = userService;
-        this.counterService = counterService;
+    // Create token for a counter
+    @PostMapping("/create/{counterId}")
+    public ResponseEntity<Token> createToken(@PathVariable Long counterId) {
+        Token token = tokenService.createToken(counterId);
+        return ResponseEntity.ok(token);
     }
 
-    @Operation(summary = "Issue a new token for a user at a counter")
-    @PostMapping("/issue/{userId}/{counterId}")
-    public Token issueToken(@PathVariable Long userId,
-                            @PathVariable Long counterId) {
-        User user = userService.getById(userId);
-        ServiceCounter counter = counterService.getById(counterId);
-        return tokenService.issueToken(user, counter);
+    // Get token by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Token> getTokenById(@PathVariable Long id) {
+        Token token = tokenService.getTokenById(id);
+        return ResponseEntity.ok(token);
     }
 
-   
-    @Operation(summary = "Update token status")
+    // Get all tokens
+    @GetMapping("/all")
+    public ResponseEntity<List<Token>> getAllTokens() {
+        List<Token> tokens = tokenService.getAllTokens();
+        return ResponseEntity.ok(tokens);
+    }
+
+    // Update token status
     @PutMapping("/status/{tokenId}")
-    public Token updateStatus(@PathVariable Long tokenId,
-                              @RequestParam Token.Status status) {
-        return tokenService.updateStatus(tokenId, status);
+    public ResponseEntity<Token> updateTokenStatus(@PathVariable Long tokenId, @RequestParam String status) {
+        Token updatedToken = tokenService.updateTokenStatus(tokenId, status);
+        return ResponseEntity.ok(updatedToken);
     }
 
-  
-    @Operation(summary = "Get token by ID")
-    @GetMapping("/{tokenId}")
-    public Token getToken(@PathVariable Long tokenId) {
-        return tokenService.getById(tokenId);
+    // Delete token
+    @DeleteMapping("/delete/{tokenId}")
+    public ResponseEntity<Void> deleteToken(@PathVariable Long tokenId) {
+        tokenService.deleteToken(tokenId);
+        return ResponseEntity.ok().build();
     }
 }

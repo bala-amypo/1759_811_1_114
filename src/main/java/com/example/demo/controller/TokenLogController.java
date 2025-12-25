@@ -1,39 +1,40 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenLog;
 import com.example.demo.service.TokenLogService;
-import com.example.demo.service.TokenService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Token Logs")
 @RestController
-@RequestMapping("/logs")
+@RequestMapping("/token-logs")
 public class TokenLogController {
 
-    private final TokenLogService tokenLogService;
-    private final TokenService tokenService;
+    @Autowired
+    private TokenLogService tokenLogService;
 
-    public TokenLogController(TokenLogService tokenLogService,
-                              TokenService tokenService) {
-        this.tokenLogService = tokenLogService;
-        this.tokenService = tokenService;
+    // Log an action for a token
+    @PostMapping("/log/{tokenId}")
+    public ResponseEntity<TokenLog> logAction(@PathVariable Long tokenId,
+                                              @RequestParam String action,
+                                              @RequestParam(required = false) String performedBy) {
+        TokenLog log = tokenLogService.logAction(tokenId, action, performedBy != null ? performedBy : "System");
+        return ResponseEntity.ok(log);
     }
 
-    @Operation(summary = "Create a manual log for a token")
-    @PostMapping("/{tokenId}")
-    public TokenLog createLog(@PathVariable Long tokenId, @RequestParam String message) {
-        Token token = tokenService.getById(tokenId);
-        return tokenLogService.createLog(token, message);
+    // Get logs for a specific token
+    @GetMapping("/token/{tokenId}")
+    public ResponseEntity<List<TokenLog>> getLogsByToken(@PathVariable Long tokenId) {
+        List<TokenLog> logs = tokenLogService.getLogsByToken(tokenId);
+        return ResponseEntity.ok(logs);
     }
 
-    @Operation(summary = "Get all logs for a token")
-    @GetMapping("/{tokenId}")
-    public List<TokenLog> getLogs(@PathVariable Long tokenId) {
-        return tokenLogService.getLogsByTokenId(tokenId);
+    // Get all token logs
+    @GetMapping("/all")
+    public ResponseEntity<List<TokenLog>> getAllLogs() {
+        List<TokenLog> logs = tokenLogService.getAllLogs();
+        return ResponseEntity.ok(logs);
     }
 }

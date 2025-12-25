@@ -1,36 +1,41 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Queue;
 import com.example.demo.entity.Token;
 import com.example.demo.service.QueueService;
-import com.example.demo.service.TokenService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Queue")
+import java.util.List;
+
 @RestController
 @RequestMapping("/queue")
 public class QueueController {
 
-    private final QueueService queueService;
-    private final TokenService tokenService;
+    @Autowired
+    private QueueService queueService;
 
-    public QueueController(QueueService queueService, TokenService tokenService) {
-        this.queueService = queueService;
-        this.tokenService = tokenService;
+    // Get the next token for a service counter
+    @GetMapping("/next/{counterId}")
+    public ResponseEntity<Token> getNextToken(@PathVariable Long counterId) {
+        Token nextToken = queueService.getNextToken(counterId);
+        if (nextToken == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(nextToken);
     }
 
-    @Operation(summary = "Update position of a token in queue")
-    @PutMapping("/{tokenId}/{newPosition}")
-    public Queue updatePosition(@PathVariable Long tokenId, @PathVariable Integer newPosition) {
-        Token token = tokenService.getById(tokenId);
-        return queueService.updatePosition(token, newPosition);
+    // Get all waiting tokens in queue for a counter
+    @GetMapping("/all/{counterId}")
+    public ResponseEntity<List<Token>> getQueue(@PathVariable Long counterId) {
+        List<Token> tokens = queueService.getQueue(counterId);
+        return ResponseEntity.ok(tokens);
     }
 
-    @Operation(summary = "Get queue entry by token")
-    @GetMapping("/{tokenId}")
-    public Queue getQueueByToken(@PathVariable Long tokenId) {
-        return queueService.getByTokenId(tokenId);
+    // Complete a token (remove from queue)
+    @PutMapping("/complete/{tokenId}")
+    public ResponseEntity<Void> completeToken(@PathVariable Long tokenId) {
+        queueService.removeTokenFromQueue(tokenId);
+        return ResponseEntity.ok().build();
     }
 }

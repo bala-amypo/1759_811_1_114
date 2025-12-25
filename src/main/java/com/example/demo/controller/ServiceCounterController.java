@@ -2,33 +2,51 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.ServiceCounter;
 import com.example.demo.service.ServiceCounterService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Service Counters")
 @RestController
 @RequestMapping("/counters")
 public class ServiceCounterController {
 
-    private final ServiceCounterService serviceCounterService;
+    @Autowired
+    private ServiceCounterService counterService;
 
-    public ServiceCounterController(ServiceCounterService serviceCounterService) {
-        this.serviceCounterService = serviceCounterService;
+    // Create a new service counter
+    @PostMapping("/create")
+    public ResponseEntity<ServiceCounter> createCounter(@RequestBody ServiceCounter counter) {
+        ServiceCounter createdCounter = counterService.createCounter(counter);
+        return ResponseEntity.ok(createdCounter);
     }
 
-    @Operation(summary = "Add a new service counter")
-    @PostMapping("/")
-    public ServiceCounter addCounter(@Valid @RequestBody ServiceCounter serviceCounter) {
-        return serviceCounterService.add(serviceCounter);
+    // Get service counter by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ServiceCounter> getCounter(@PathVariable Long id) {
+        ServiceCounter counter = counterService.getCounterById(id);
+        return ResponseEntity.ok(counter);
     }
 
-    @Operation(summary = "Get all active service counters")
-    @GetMapping("/active")
-    public List<ServiceCounter> getActiveCounters() {
-        return serviceCounterService.getActiveCounters();
+    // Get all service counters
+    @GetMapping("/all")
+    public ResponseEntity<List<ServiceCounter>> getAllCounters() {
+        List<ServiceCounter> counters = counterService.getAllCounters();
+        return ResponseEntity.ok(counters);
+    }
+
+    // Update counter details
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ServiceCounter> updateCounter(@PathVariable Long id, @RequestBody ServiceCounter counter) {
+        ServiceCounter updatedCounter = counterService.updateCounter(id, counter);
+        return ResponseEntity.ok(updatedCounter);
+    }
+
+    // Delete counter
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteCounter(@PathVariable Long id) {
+        counterService.deleteCounter(id);
+        return ResponseEntity.ok().build();
     }
 }
