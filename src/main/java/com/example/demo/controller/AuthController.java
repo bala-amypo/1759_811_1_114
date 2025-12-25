@@ -4,10 +4,15 @@ import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,40 +20,56 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
+    @Autowired
     private UserService userService;
 
-    // LOGIN: takes AuthRequest, returns AuthResponse
+    // LOGIN: uses AuthRequest, returns AuthResponse with JWT
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        User user = userService.login(request.getUsername(), request.getPassword());
-        if (user == null) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
+
+            // Generate JWT token
+            String token = tokenProvider.generateToken(authentication);
+
+            AuthResponse response = new AuthResponse(token, request.getUsername());
+            return ResponseEntity.ok(response);
+
+        } catch (AuthenticationException ex) {
             return ResponseEntity.status(401).build(); // Unauthorized
         }
-        // You can generate a token if your system requires it, else return username only
-        String token = user.getToken() != null ? user.getToken() : "dummy-token"; // replace with real token logic
-        AuthResponse response = new AuthResponse(token, user.getUsername());
-        return ResponseEntity.ok(response);
     }
 
-    // REGISTER: takes RegisterRequest, returns AuthResponse or User info
+    // REGISTER: uses RegisterRequest, returns AuthResponse with JWT
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        // Map RegisterRequest to User entity
+        // Create User entity from RegisterRequest
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(request.getPassword());
         if (request.getEmail() != null) user.setEmail(request.getEmail());
 
+        // Save user
         User registeredUser = userService.register(user);
 
-        // Generate token if required (or dummy for now)
-        String token = registeredUser.getToken() != null ? registeredUser.getToken() : "dummy-token";
-        AuthResponse response = new AuthResponse(token, registeredUser.getUsername());
+        // Authenticate newly registered user to generate JWT
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+        String token = tokenProvider.generateToken(authentication);
 
+        AuthResponse response = new AuthResponse(token, registeredUser.getUsername());
         return ResponseEntity.ok(response);
     }
 
-    // LOGOUT: optional, using userId as path variable
+    // LOGOUT (optional, mainly for client-side token removal)
     @PostMapping("/logout/{userId}")
     public ResponseEntity<String> logout(@PathVariable Long userId) {
         userService.logout(userId);
