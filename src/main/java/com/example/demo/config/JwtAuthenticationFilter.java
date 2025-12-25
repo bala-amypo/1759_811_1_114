@@ -1,67 +1,50 @@
 package com.example.demo.config;
 
-import com.example.demo.entity.User;
+import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.service.UserService;
-import com.example.demo.security.JwtTokenProvider;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
-import java.util.Collections;
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
 
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserService userService;
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserService userService) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.userService = userService;
+    }
 
-    @Autowired
-    private UserService userService;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain)
-            throws ServletException, IOException {
+        return http.build();
+    }
 
-        try {
-            String header = request.getHeader("Authorization");
-            String token = null;
-            if (header != null && header.startsWith("Bearer ")) {
-                token = header.substring(7);
-            }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-            if (token != null && tokenProvider.validateToken(token)) {
-                String email = tokenProvider.getUsernameFromToken(token);
-
-                // Fetch user from your existing UserService
-                User user = userService.findByEmail(email); // adjust if using username
-
-                if (user != null) {
-                    // Create authentication and set context
-                    UsernamePasswordAuthenticationToken auth =
-                            new UsernamePasswordAuthenticationToken(
-                                    user,
-                                    null,
-                                    Collections.singletonList(new SimpleGrantedAuthority(user.getRole()))
-                            );
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
-            }
-
-        } catch (Exception ex) {
-            // Optionally log the exception
-            System.out.println("Could not set user authentication: " + ex.getMessage());
-        }
-
-        filterChain.doFilter(request, response);
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

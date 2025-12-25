@@ -1,20 +1,18 @@
 package com.example.demo.dto;
 
 public class AuthResponse {
-    private String token;
     private String username;
+    private String email;
+    private String token;
 
-    // Constructors
-    public AuthResponse() {}
-    public AuthResponse(String token, String username) {
-        this.token = token;
+    public AuthResponse(String username, String email, String token) {
         this.username = username;
+        this.email = email;
+        this.token = token;
     }
 
-    // Getters & Setters
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-
+    // Getters only
     public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getEmail() { return email; }
+    public String getToken() { return token; }
 }
