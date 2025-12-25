@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface TokenLogService {
 
-    TokenLog createLog(Long tokenId, String message) throws Exception;
+    TokenLog addLog(Long tokenId, String message) throws Exception;
 
     List<TokenLog> getLogs(Long tokenId) throws Exception;
 }
