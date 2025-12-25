@@ -5,9 +5,10 @@ import com.example.demo.entity.Token;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class QueueServiceImpl implements QueueService {
 
     private final QueuePositionRepository queueRepository;
