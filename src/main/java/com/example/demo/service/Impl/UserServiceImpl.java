@@ -1,61 +1,43 @@
-package com.example.demo.controller;
+package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import com.example.demo.config.JwtTokenProvider;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+public class UserServiceImpl implements UserService {
 
-@RestController
-@RequestMapping("/api/auth")
-public class AuthController {
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @PostMapping("/register")
-    public AuthResponse register(@RequestBody RegisterRequest request) {
-
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        // add roles if required
-        User registeredUser = userService.registerUser(user);
-
-        String token = jwtTokenProvider.createToken(registeredUser.getUsername());
-
-        return new AuthResponse(
-                registeredUser.getUsername(),
-                token
-        );
+    // Constructor Injection
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+    @Override
+    public User register(User user) throws Exception {
+        // Check for duplicate email
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            throw new Exception("Email already exists");
+        }
+        // Default role if not set
+        if (user.getRole() == null) {
+            user.setRole(User.Role.STAFF);
+        }
+        return userRepository.save(user);
+    }
 
-        User user = userService.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    @Override
+    public User findByEmail(String email) throws Exception {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+        return user;
+    }
 
-        String token = jwtTokenProvider.createToken(user.getUsername());
-
-        return new AuthResponse(
-                user.getUsername(),
-                token
-        );
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

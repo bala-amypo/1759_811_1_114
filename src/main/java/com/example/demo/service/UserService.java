@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.User;
-import java.util.Optional;
+import java.util.List;
 
 public interface UserService {
-    User saveUser(User user);
-    Optional<User> findByEmail(String email);
-    User registerUser(User user);
-    User authenticate(String email,String password);
+
+    User register(User user) throws Exception;
+
+    User findByEmail(String email) throws Exception;
+
+    List<User> getAllUsers();
 }
