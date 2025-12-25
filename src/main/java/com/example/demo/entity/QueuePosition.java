@@ -4,37 +4,25 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "queue_positions")
 public class QueuePosition {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // One-to-One with Token
     @OneToOne
-    @JoinColumn(name = "token_id", nullable = false)
     private Token token;
 
-    @Column(nullable = false)
     private Integer position;
 
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // Default constructor
+    // ✅ No-args constructor
     public QueuePosition() {
-        this.updatedAt = LocalDateTime.now();
     }
 
-    // Parameterized constructor
-    public QueuePosition(Token token, Integer position) {
-        this.token = token;
-        this.position = position;
-        this.updatedAt = LocalDateTime.now();
-    }
+    // 🔹 Getters and Setters (exact names)
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

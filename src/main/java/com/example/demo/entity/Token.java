@@ -2,63 +2,32 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "tokens")
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String tokenNumber;
 
     @ManyToOne
-    @JoinColumn(name = "service_counter_id", nullable = false)
     private ServiceCounter serviceCounter;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Status status;
+    private String status; // WAITING / SERVING / COMPLETED / CANCELLED
 
-    @Column(nullable = false)
     private LocalDateTime issuedAt;
 
     private LocalDateTime completedAt;
 
-    // One-to-One with QueuePosition
-    @OneToOne(mappedBy = "token", cascade = CascadeType.ALL)
-    private QueuePosition queuePosition;
-
-    // One-to-Many with TokenLog
-    @OneToMany(mappedBy = "token", cascade = CascadeType.ALL)
-    private List<TokenLog> tokenLogs;
-
-    // Status Enum
-    public enum Status {
-        WAITING,
-        SERVING,
-        COMPLETED,
-        CANCELLED
-    }
-
-    // Default constructor
+    // ✅ No-args constructor
     public Token() {
-        this.status = Status.WAITING;
-        this.issuedAt = LocalDateTime.now();
     }
 
-    // Parameterized constructor
-    public Token(String tokenNumber, ServiceCounter serviceCounter, Status status) {
-        this.tokenNumber = tokenNumber;
-        this.serviceCounter = serviceCounter;
-        this.status = status != null ? status : Status.WAITING;
-        this.issuedAt = LocalDateTime.now();
-    }
+    // 🔹 Getters and Setters (exact names)
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -83,11 +52,11 @@ public class Token {
         this.serviceCounter = serviceCounter;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -105,21 +74,5 @@ public class Token {
 
     public void setCompletedAt(LocalDateTime completedAt) {
         this.completedAt = completedAt;
-    }
-
-    public QueuePosition getQueuePosition() {
-        return queuePosition;
-    }
-
-    public void setQueuePosition(QueuePosition queuePosition) {
-        this.queuePosition = queuePosition;
-    }
-
-    public List<TokenLog> getTokenLogs() {
-        return tokenLogs;
-    }
-
-    public void setTokenLogs(List<TokenLog> tokenLogs) {
-        this.tokenLogs = tokenLogs;
     }
 }

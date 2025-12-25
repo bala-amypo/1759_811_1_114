@@ -4,37 +4,31 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "token_logs")
 public class TokenLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Many logs can belong to one Token
     @ManyToOne
-    @JoinColumn(name = "token_id", nullable = false)
     private Token token;
 
-    @Column(nullable = false)
     private String logMessage;
 
-    @Column(nullable = false)
     private LocalDateTime loggedAt;
 
-    // Default constructor
+    // ✅ No-args constructor
     public TokenLog() {
+    }
+
+    // ✅ Auto-set timestamp
+    @PrePersist
+    public void onCreate() {
         this.loggedAt = LocalDateTime.now();
     }
 
-    // Parameterized constructor
-    public TokenLog(Token token, String logMessage) {
-        this.token = token;
-        this.logMessage = logMessage;
-        this.loggedAt = LocalDateTime.now();
-    }
+    // 🔹 Getters and Setters (exact names)
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
