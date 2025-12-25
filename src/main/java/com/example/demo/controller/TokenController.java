@@ -2,51 +2,56 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Token;
 import com.example.demo.service.TokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tokens")
 public class TokenController {
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    // Create token for a counter
-    @PostMapping("/create/{counterId}")
-    public ResponseEntity<Token> createToken(@PathVariable Long counterId) {
-        Token token = tokenService.createToken(counterId);
-        return ResponseEntity.ok(token);
+    // Constructor Injection
+    public TokenController(TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
-    // Get token by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Token> getTokenById(@PathVariable Long id) {
-        Token token = tokenService.getTokenById(id);
-        return ResponseEntity.ok(token);
-    }
-
-    // Get all tokens
-    @GetMapping("/all")
-    public ResponseEntity<List<Token>> getAllTokens() {
-        List<Token> tokens = tokenService.getAllTokens();
-        return ResponseEntity.ok(tokens);
+    // Issue a new token for a counter
+    @PostMapping("/issue/{counterId}")
+    public ResponseEntity<?> issueToken(@PathVariable Long counterId) {
+        try {
+            Token token = tokenService.issueToken(counterId);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     // Update token status
     @PutMapping("/status/{tokenId}")
-    public ResponseEntity<Token> updateTokenStatus(@PathVariable Long tokenId, @RequestParam String status) {
-        Token updatedToken = tokenService.updateTokenStatus(tokenId, status);
-        return ResponseEntity.ok(updatedToken);
+    public ResponseEntity<?> updateStatus(@PathVariable Long tokenId, @RequestBody Map<String, String> body) {
+        try {
+            String statusStr = body.get("status");
+            Token.Status newStatus = Token.Status.valueOf(statusStr.toUpperCase());
+            Token token = tokenService.updateTokenStatus(tokenId, newStatus);
+            return ResponseEntity.ok(token);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid status"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
-    // Delete token
-    @DeleteMapping("/delete/{tokenId}")
-    public ResponseEntity<Void> deleteToken(@PathVariable Long tokenId) {
-        tokenService.deleteToken(tokenId);
-        return ResponseEntity.ok().build();
+    // Get token details
+    @GetMapping("/{tokenId}")
+    public ResponseEntity<?> getToken(@PathVariable Long tokenId) {
+        try {
+            Token token = tokenService.getTokenById(tokenId);
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }

@@ -2,39 +2,43 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.TokenLog;
 import com.example.demo.service.TokenLogService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/token-logs")
+@RequestMapping("/logs")
 public class TokenLogController {
 
-    @Autowired
-    private TokenLogService tokenLogService;
+    private final TokenLogService tokenLogService;
 
-    // Log an action for a token
-    @PostMapping("/log/{tokenId}")
-    public ResponseEntity<TokenLog> logAction(@PathVariable Long tokenId,
-                                              @RequestParam String action,
-                                              @RequestParam(required = false) String performedBy) {
-        TokenLog log = tokenLogService.logAction(tokenId, action, performedBy != null ? performedBy : "System");
-        return ResponseEntity.ok(log);
+    // Constructor Injection
+    public TokenLogController(TokenLogService tokenLogService) {
+        this.tokenLogService = tokenLogService;
     }
 
-    // Get logs for a specific token
-    @GetMapping("/token/{tokenId}")
-    public ResponseEntity<List<TokenLog>> getLogsByToken(@PathVariable Long tokenId) {
-        List<TokenLog> logs = tokenLogService.getLogsByToken(tokenId);
-        return ResponseEntity.ok(logs);
+    // Create a new log
+    @PostMapping("/{tokenId}")
+    public ResponseEntity<?> createLog(@PathVariable Long tokenId, @RequestBody Map<String, String> body) {
+        try {
+            String message = body.get("message");
+            TokenLog log = tokenLogService.createLog(tokenId, message);
+            return ResponseEntity.ok(log);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
-    // Get all token logs
-    @GetMapping("/all")
-    public ResponseEntity<List<TokenLog>> getAllLogs() {
-        List<TokenLog> logs = tokenLogService.getAllLogs();
-        return ResponseEntity.ok(logs);
+    // List all logs for a token
+    @GetMapping("/{tokenId}")
+    public ResponseEntity<?> getLogs(@PathVariable Long tokenId) {
+        try {
+            List<TokenLog> logs = tokenLogService.getLogs(tokenId);
+            return ResponseEntity.ok(logs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 }
