@@ -1,21 +1,20 @@
 package com.example.demo.config;
 
-import com.example.demo.entity.User;
-import com.example.demo.service.UserService;
-import com.example.demo.config.JwtTokenProvider;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+import com.example.demo.util.JwtUtil;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -24,7 +23,7 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserService userService;
@@ -34,19 +33,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtTokenProvider.resolveToken(request);
+        final String authHeader = request.getHeader("Authorization");
+        String email = null;
+        String token = null;
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            String username = jwtTokenProvider.getUsername(token);
+        // Check for Bearer token
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            email = jwtUtil.extractEmail(token);
+        }
 
-            Optional<User> optionalUser = userService.findByUsername(username);
-            User user = optionalUser.orElseThrow(() -> new RuntimeException("User not found"));
+        // Authenticate user if email is present and not already authenticated
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            Optional<User> optionalUser = userService.findByEmail(email);
 
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (optionalUser.isPresent() && jwtUtil.validateToken(token, optionalUser.get())) {
+                User user = optionalUser.get();
 
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
 
         filterChain.doFilter(request, response);
