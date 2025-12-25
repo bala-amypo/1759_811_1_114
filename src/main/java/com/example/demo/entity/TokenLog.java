@@ -12,23 +12,55 @@ public class TokenLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "token_id", nullable = false)
     private Token token;
 
     private String logMessage;
 
     private LocalDateTime loggedAt;
 
-   
-   
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // No-arg constructor
+    public TokenLog() {
+    }
 
-    public Token getToken() { return token; }
-    public void setToken(Token token) { this.token = token; }
+    // Parameterized constructor
+    public TokenLog(Token token, String logMessage) {
+        this.token = token;
+        this.logMessage = logMessage;
+        this.loggedAt = LocalDateTime.now();
+    }
 
-    public String getLogMessage() { return logMessage; }
-    public void setLogMessage(String logMessage) { this.logMessage = logMessage; }
+    @PrePersist
+    public void onCreate() {
+        this.loggedAt = LocalDateTime.now();
+    }
 
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+    // Getters & setters
+    public Long getId() {
+        return id;
+    }
+
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public String getLogMessage() {
+        return logMessage;
+    }
+
+    public void setLogMessage(String logMessage) {
+        this.logMessage = logMessage;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

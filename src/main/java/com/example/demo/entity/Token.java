@@ -7,49 +7,83 @@ import java.time.LocalDateTime;
 @Table(name = "tokens")
 public class Token {
 
-    public enum Status {
-        WAITING, SERVING, COMPLETED
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
-    private Integer tokenNumber;
-
-    @Enumerated(EnumType.STRING)
-    private Status status;
+    private String tokenNumber;
 
     @ManyToOne
-    private ServiceCounter counter;
+    @JoinColumn(name = "service_counter_id")
+    private ServiceCounter serviceCounter;
 
-    @ManyToOne
-    private User user;
+    private String status;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime issuedAt;
 
     private LocalDateTime completedAt;
 
-   
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // No-arg constructor
+    public Token() {
+    }
 
-    public Integer getTokenNumber() { return tokenNumber; }
-    public void setTokenNumber(Integer tokenNumber) { this.tokenNumber = tokenNumber; }
+    // Parameterized constructor
+    public Token(String tokenNumber, ServiceCounter serviceCounter, String status,
+                 LocalDateTime issuedAt, LocalDateTime completedAt) {
+        this.tokenNumber = tokenNumber;
+        this.serviceCounter = serviceCounter;
+        this.status = status;
+        this.issuedAt = issuedAt;
+        this.completedAt = completedAt;
+    }
 
-    public Status getStatus() { return status; }
-    public void setStatus(Status status) { this.status = status; }
+    // Getters & setters
+    public Long getId() {
+        return id;
+    }
 
-    public ServiceCounter getCounter() { return counter; }
-    public void setCounter(ServiceCounter counter) { this.counter = counter; }
+    public String getTokenNumber() {
+        return tokenNumber;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setTokenNumber(String tokenNumber) {
+        this.tokenNumber = tokenNumber;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public ServiceCounter getServiceCounter() {
+        return serviceCounter;
+    }
 
-    public LocalDateTime getCompletedAt() { return completedAt; }
-    public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+    public void setServiceCounter(ServiceCounter serviceCounter) {
+        this.serviceCounter = serviceCounter;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getIssuedAt() {
+        return issuedAt;
+    }
+
+    public void setIssuedAt(LocalDateTime issuedAt) {
+        this.issuedAt = issuedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
