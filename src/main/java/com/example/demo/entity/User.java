@@ -75,7 +75,7 @@ public class User {
 }
     private String role;
 
-  w
+  
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
