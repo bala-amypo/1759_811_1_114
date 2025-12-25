@@ -1,41 +1,68 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Queue;
 import com.example.demo.entity.Token;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.repository.QueueRepository;
+import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
+import com.example.demo.service.TokenLogService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QueueServiceImpl implements QueueService {
 
-    private final QueueRepository queueRepository;
-    private final TokenRepository tokenRepository;
+    @Autowired
+    private TokenRepository tokenRepository;
 
-  
-    public QueueServiceImpl(QueueRepository queueRepository, TokenRepository tokenRepository) {
-        this.queueRepository = queueRepository;
-        this.tokenRepository = tokenRepository;
-    }
+    @Autowired
+    private TokenLogService tokenLogService;
 
     @Override
-    public Queue updatePosition(Token token, Integer newPosition) {
-        if (token == null) {
-            throw new ResourceNotFoundException("Token not found");
+    public Token getNextToken(Long counterId) {
+        // Get the first waiting token for the counter
+        List<Token> waitingTokens = tokenRepository.findAll().stream()
+                .filter(t -> t.getServiceCounter().getId().equals(counterId))
+                .filter(t -> "WAITING".equals(t.getStatus()))
+                .sorted(Comparator.comparing(Token::getCreatedAt))
+                .collect(Collectors.toList());
+
+        if (waitingTokens.isEmpty()) {
+            return null; // No tokens waiting
         }
 
-        Queue queue = queueRepository.findByTokenId(token.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found for token"));
+        Token nextToken = waitingTokens.get(0);
+        nextToken.setStatus("IN_PROGRESS");
+        tokenRepository.save(nextToken);
 
-        queue.setPosition(newPosition);
-        return queueRepository.save(queue);
+        // Log the action
+        tokenLogService.logAction(nextToken.getId(), "IN_PROGRESS", "System");
+
+        return nextToken;
     }
 
     @Override
-    public Queue getByTokenId(Long tokenId) {
-        return queueRepository.findByTokenId(tokenId)
-                .orElseThrow(() -> new ResourceNotFoundException("Queue entry not found for token"));
+    public List<Token> getQueue(Long counterId) {
+        return tokenRepository.findAll().stream()
+                .filter(t -> t.getServiceCounter().getId().equals(counterId))
+                .filter(t -> "WAITING".equals(t.getStatus()))
+                .sorted(Comparator.comparing(Token::getCreatedAt))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void removeTokenFromQueue(Long tokenId) {
+        Token token = tokenRepository.findById(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
+
+        token.setStatus("COMPLETED");
+        tokenRepository.save(token);
+
+        // Log completion
+        tokenLogService.logAction(tokenId, "COMPLETED", "System");
     }
 }
