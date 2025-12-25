@@ -1,32 +1,28 @@
 package com.example.demo.config;
 
-import com.example.demo.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
-    private static final String SECRET_KEY = "secret";
-    private static final long VALIDITY_MS = 3600000; // 1 hour
+    private final String SECRET = "secret-key";
 
-    /**
-     * Generate JWT token for authenticated user
-     */
-    public String generateToken(User user) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + VALIDITY_MS);
+    public String generateToken(Long userId, String email, String role) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("email", email);
+        claims.put("role", role);
 
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("userid", user.getId())
-                .claim("role", user.getRole().name())
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
     }
 }
