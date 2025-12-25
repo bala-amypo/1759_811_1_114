@@ -11,16 +11,20 @@ public class QueuePosition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // One-to-One with Token
     @OneToOne
-    @JoinColumn(name = "token_id", nullable = false, unique = true)
+    @JoinColumn(name = "token_id", nullable = false)
     private Token token;
 
+    @Column(nullable = false)
     private Integer position;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // No-arg constructor
+    // Default constructor
     public QueuePosition() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Parameterized constructor
@@ -30,19 +34,13 @@ public class QueuePosition {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    // Getters & setters
+    // Getters and Setters
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Token getToken() {
@@ -65,7 +63,7 @@ public class QueuePosition {
         return updatedAt;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
