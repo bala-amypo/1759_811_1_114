@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 
@@ -14,24 +17,38 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-    // Login endpoint
+    // LOGIN: takes AuthRequest, returns AuthResponse
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestParam String username, @RequestParam String password) {
-        User user = userService.login(username, password);
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        User user = userService.login(request.getUsername(), request.getPassword());
         if (user == null) {
             return ResponseEntity.status(401).build(); // Unauthorized
         }
-        return ResponseEntity.ok(user);
+        // You can generate a token if your system requires it, else return username only
+        String token = user.getToken() != null ? user.getToken() : "dummy-token"; // replace with real token logic
+        AuthResponse response = new AuthResponse(token, user.getUsername());
+        return ResponseEntity.ok(response);
     }
 
-    // Register endpoint
+    // REGISTER: takes RegisterRequest, returns AuthResponse or User info
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        User newUser = userService.register(user);
-        return ResponseEntity.ok(newUser);
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        // Map RegisterRequest to User entity
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        if (request.getEmail() != null) user.setEmail(request.getEmail());
+
+        User registeredUser = userService.register(user);
+
+        // Generate token if required (or dummy for now)
+        String token = registeredUser.getToken() != null ? registeredUser.getToken() : "dummy-token";
+        AuthResponse response = new AuthResponse(token, registeredUser.getUsername());
+
+        return ResponseEntity.ok(response);
     }
 
-    // Logout endpoint
+    // LOGOUT: optional, using userId as path variable
     @PostMapping("/logout/{userId}")
     public ResponseEntity<String> logout(@PathVariable Long userId) {
         userService.logout(userId);
