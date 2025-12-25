@@ -2,39 +2,39 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Authentication")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
-
- 
-    @Operation(summary = "Register a new user")
-    @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
-    }
-
-    @Operation(summary = "Login user by email")
+    // Login endpoint
     @PostMapping("/login")
-    public User login(@RequestBody LoginEmailRequest loginRequest) {
-        return userService.login(loginRequest.getEmail());
+    public ResponseEntity<User> login(@RequestParam String username, @RequestParam String password) {
+        User user = userService.login(username, password);
+        if (user == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
+        return ResponseEntity.ok(user);
     }
 
-  
-    public static class LoginEmailRequest {
-        private String email;
+    // Register endpoint
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user) {
+        User newUser = userService.register(user);
+        return ResponseEntity.ok(newUser);
+    }
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+    // Logout endpoint
+    @PostMapping("/logout/{userId}")
+    public ResponseEntity<String> logout(@PathVariable Long userId) {
+        userService.logout(userId);
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
