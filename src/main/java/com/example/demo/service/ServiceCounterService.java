@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ServiceCounterService {
 
-    ServiceCounter add(ServiceCounter serviceCounter);
+    ServiceCounter addCounter(ServiceCounter counter);
 
     List<ServiceCounter> getActiveCounters();
 
