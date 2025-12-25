@@ -37,10 +37,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token issueToken(Long counterId) throws Exception {
         ServiceCounter counter = counterRepository.findById(counterId)
-                .orElseThrow(() -> new Exception("Counter not found"));
+                .orElseThrow(() -> new Exception("not found"));
 
         if (!counter.getIsActive()) {
-            throw new Exception("Counter not active");
+            throw new Exception("not active");
         }
 
         // Generate token number
