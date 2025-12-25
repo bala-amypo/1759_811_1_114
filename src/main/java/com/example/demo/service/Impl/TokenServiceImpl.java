@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token getTokenId(Long tokenId) throws Exception {
+    public Token getToken(Long tokenId) throws Exception {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new Exception("not found"));
         return token;

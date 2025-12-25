@@ -21,10 +21,10 @@ public class TokenLogController {
 
     // Create a new log
     @PostMapping("/{tokenId}")
-    public ResponseEntity<?> createLog(@PathVariable Long tokenId, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> addLog(@PathVariable Long tokenId, @RequestBody Map<String, String> body) {
         try {
             String message = body.get("message");
-            TokenLog log = tokenLogService.createLog(tokenId, message);
+            TokenLog log = tokenLogService.addLog(tokenId, message);
             return ResponseEntity.ok(log);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

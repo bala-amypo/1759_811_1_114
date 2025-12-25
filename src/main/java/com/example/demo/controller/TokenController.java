@@ -48,7 +48,7 @@ public class TokenController {
     @GetMapping("/{tokenId}")
     public ResponseEntity<?> getToken(@PathVariable Long tokenId) {
         try {
-            Token token = tokenService.getTokenById(tokenId);
+            Token token = tokenService.getToken(tokenId);
             return ResponseEntity.ok(token);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
