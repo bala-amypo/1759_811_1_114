@@ -65,12 +65,12 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token updateTokenStatus(Long tokenId, Status newStatus) throws Exception {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new Exception("Token not found"));
+                .orElseThrow(() -> new Exception("not found"));
 
         // Validate status transition
         Status current = token.getStatus();
         if (!isValidTransition(current, newStatus)) {
-            throw new Exception("Invalid status transition");
+            throw new Exception("Invalid status");
         }
 
         token.setStatus(newStatus);
@@ -89,7 +89,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getTokenById(Long tokenId) throws Exception {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new Exception("Token not found"));
+                .orElseThrow(() -> new Exception("not found"));
         return token;
     }
 
