@@ -1,28 +1,65 @@
-package com.example.demo.config;
+package com.example.demo.controller;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.stereotype.Component;
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+import com.example.demo.config.JwtTokenProvider;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Component
-public class JwtTokenProvider {
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
 
-    private final String SECRET = "secret-key";
+    @Autowired
+    private UserService userService;
 
-    public String generateToken(Long userId, String email, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-        claims.put("email", email);
-        claims.put("role", role);
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS256, SECRET)
-                .compact();
+    // Example login endpoint
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        // Validate user credentials (example)
+        User user = userService.findByEmail(loginRequest.getEmail());
+
+        if (user == null || !userService.checkPassword(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.badRequest().body("Invalid email or password");
+        }
+
+        // Generate JWT token
+        String token = jwtTokenProvider.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name()
+        );
+
+        // Return token in response
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    // DTOs for request/response
+    public static class LoginRequest {
+        private String email;
+        private String password;
+
+        // Getters and setters
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+    }
+
+    public static class JwtResponse {
+        private String token;
+
+        public JwtResponse(String token) {
+            this.token = token;
+        }
+
+        public String getToken() { return token; }
+        public void setToken(String token) { this.token = token; }
     }
 }
