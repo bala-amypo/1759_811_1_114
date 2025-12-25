@@ -1,62 +1,49 @@
-package com.example.demo.security;
+package com.example.demo.entity;
 
-import com.example.demo.service.impl.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.persistence.*;
 
-@Configuration
-public class SecurityConfig {
+@Entity
+@Table(name = "users")
+public class User {
 
-    @Autowired
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private String name;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService; // implements UserDetailsService
+    @Column(unique = true, nullable = false)
+    private String email;
 
-    // AuthenticationManager bean
-    @Bean
-    public AuthenticationManager authManager(HttpSecurity http, PasswordEncoder encoder) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(encoder)
-                .and()
-                .build();
+    private String password;
+
+    private String role;
+
+    // No-arg constructor
+    public User() {
     }
 
-    // Password encoder (BCrypt)
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    // Parameterized constructor
+    public User(String name, String email, String password, String role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    // Security filter chain
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeHttpRequests()
-            .requestMatchers("/auth/**").permitAll() // allow login/register
-            .anyRequest().authenticated(); // all other endpoints require JWT
+    // Getters & Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-        // Add JWT filter before UsernamePasswordAuthenticationFilter
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-        return http.build();
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }
