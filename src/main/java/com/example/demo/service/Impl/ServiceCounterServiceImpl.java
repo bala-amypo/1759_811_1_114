@@ -13,18 +13,14 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository serviceCounterRepository;
 
-  
+    // Constructor injection ONLY
     public ServiceCounterServiceImpl(ServiceCounterRepository serviceCounterRepository) {
         this.serviceCounterRepository = serviceCounterRepository;
     }
 
     @Override
-    public ServiceCounter add(ServiceCounter serviceCounter) {
-      
-        if (serviceCounter.getIsActive() == null) {
-            serviceCounter.setIsActive(true);
-        }
-        return serviceCounterRepository.save(serviceCounter);
+    public ServiceCounter addCounter(ServiceCounter counter) {
+        return serviceCounterRepository.save(counter);
     }
 
     @Override
@@ -35,6 +31,7 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
     @Override
     public ServiceCounter getById(Long id) {
         return serviceCounterRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service Counter not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Counter not found"));
     }
 }
