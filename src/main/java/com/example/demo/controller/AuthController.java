@@ -1,78 +1,50 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.service.UserService;
+import com.example.demo.config.JwtTokenProvider;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-
-    @Autowired
-    private UserService userService;
-
-    // LOGIN: uses AuthRequest, returns AuthResponse with JWT
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
-
-            // Generate JWT token
-            String token = tokenProvider.generateToken(authentication);
-
-            AuthResponse response = new AuthResponse(token, request.getUsername());
-            return ResponseEntity.ok(response);
-
-        } catch (AuthenticationException ex) {
-            return ResponseEntity.status(401).build(); // Unauthorized
-        }
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // REGISTER: uses RegisterRequest, returns AuthResponse with JWT
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        // Create User entity from RegisterRequest
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        if (request.getEmail() != null) user.setEmail(request.getEmail());
+        User user = new User(request.getName(), request.getEmail(), request.getPassword(), "USER");
+        User savedUser = userService.saveUser(user);
 
-        // Save user
-        User registeredUser = userService.register(user);
+        String token = jwtTokenProvider.generateToken(savedUser.getEmail());
+        AuthResponse response = new AuthResponse(token, savedUser.getName(), savedUser.getEmail(), savedUser.getRole());
 
-        // Authenticate newly registered user to generate JWT
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
-        String token = tokenProvider.generateToken(authentication);
-
-        AuthResponse response = new AuthResponse(token, registeredUser.getUsername());
         return ResponseEntity.ok(response);
     }
 
-    // LOGOUT (optional, mainly for client-side token removal)
-    @PostMapping("/logout/{userId}")
-    public ResponseEntity<String> logout(@PathVariable Long userId) {
-        userService.logout(userId);
-        return ResponseEntity.ok("Logged out successfully");
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        Optional<User> userOpt = userService.findByEmail(request.getEmail());
+        if (userOpt.isEmpty() || !userOpt.get().getPassword().equals(request.getPassword())) {
+            return ResponseEntity.status(401).build();
+        }
+
+        User user = userOpt.get();
+        String token = jwtTokenProvider.generateToken(user.getEmail());
+        AuthResponse response = new AuthResponse(token, user.getName(), user.getEmail(), user.getRole());
+
+        return ResponseEntity.ok(response);
     }
 }

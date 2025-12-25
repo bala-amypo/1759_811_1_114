@@ -11,56 +11,24 @@ public class TokenLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "token_id", nullable = false)
-    private Token token;
-
-    private String logMessage;
-
-    private LocalDateTime loggedAt;
-
-    // No-arg constructor
-    public TokenLog() {
-    }
-
-    // Parameterized constructor
-    public TokenLog(Token token, String logMessage) {
-        this.token = token;
-        this.logMessage = logMessage;
-        this.loggedAt = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void onCreate() {
-        this.loggedAt = LocalDateTime.now();
-    }
+    private Long tokenId;
+    private String action;
+    private String performedBy;
+    private LocalDateTime actionTime;
 
     // Getters & setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Token getToken() {
-        return token;
-    }
+    public Long getTokenId() { return tokenId; }
+    public void setTokenId(Long tokenId) { this.tokenId = tokenId; }
 
-    public void setToken(Token token) {
-        this.token = token;
-    }
+    public String getAction() { return action; }
+    public void setAction(String action) { this.action = action; }
 
-    public String getLogMessage() {
-        return logMessage;
-    }
+    public String getPerformedBy() { return performedBy; }
+    public void setPerformedBy(String performedBy) { this.performedBy = performedBy; }
 
-    public void setLogMessage(String logMessage) {
-        this.logMessage = logMessage;
-    }
-
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public LocalDateTime getActionTime() { return actionTime; }
+    public void setActionTime(LocalDateTime actionTime) { this.actionTime = actionTime; }
 }

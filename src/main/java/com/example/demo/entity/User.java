@@ -19,11 +19,8 @@ public class User {
 
     private String role;
 
-    // No-arg constructor
-    public User() {
-    }
+    public User() {}
 
-    // Parameterized constructor
     public User(String name, String email, String password, String role) {
         this.name = name;
         this.email = email;
@@ -31,7 +28,7 @@ public class User {
         this.role = role;
     }
 
-    // Getters & Setters
+    // Getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
