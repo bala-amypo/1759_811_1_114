@@ -35,7 +35,7 @@ public class TokenController {
         try {
             String statusStr = body.get("status");
             Token.Status newStatus = Token.Status.valueOf(statusStr.toUpperCase());
-            Token token = tokenService.updateTokenStatus(tokenId, newStatus);
+            Token token = tokenService.updateStatus(tokenId, newStatus);
             return ResponseEntity.ok(token);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid status"));
