@@ -1,11 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.User;
+import com.example.demo.service.UserService;
+import com.example.demo.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.example.demo.entity.User;
-import com.example.demo.service.UserService;
 
 import java.util.Optional;
 
@@ -13,49 +13,44 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    // ------------------ Register User ------------------
+    @Autowired
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    // -------------------- REGISTER --------------------
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        // Check if user already exists by email
+        Optional<User> existingUser = userService.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            return ResponseEntity.badRequest().body("Email already registered.");
+        }
+
         // Save user
         User registeredUser = userService.registerUser(user);
-
-        // Return response
         return ResponseEntity.ok("User registered with email: " + registeredUser.getEmail());
     }
 
-    // ------------------ Authenticate User ------------------
+    // -------------------- LOGIN --------------------
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        try {
-            User user = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok("Login successful for email: " + user.getEmail());
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(401).body("Invalid email or password");
-        }
-    }
+    public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
+        // Authenticate user by email and password
+        Optional<User> userOptional = userService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
 
-    // ------------------ DTO for Login ------------------
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        public String getEmail() {
-            return email;
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(401).body("Invalid email or password.");
         }
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
+        User user = userOptional.get();
 
-        public String getPassword() {
-            return password;
-        }
+        // Generate JWT token
+        String token = jwtUtil.generateToken(user.getEmail());
 
-        public void setPassword(String password) {
-            this.password = password;
-        }
+        return ResponseEntity.ok().body("JWT Token: " + token);
     }
 }
