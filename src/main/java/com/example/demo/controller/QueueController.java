@@ -20,9 +20,9 @@ public class QueueController {
 
     // Update queue position
     @PutMapping("/position/{tokenId}/{newPosition}")
-    public ResponseEntity<?> updatePosition(@PathVariable Long tokenId, @PathVariable int newPosition) {
+    public ResponseEntity<?> updateQueuePosition(@PathVariable Long tokenId, @PathVariable int newPosition) {
         try {
-            QueuePosition updated = queueService.updatePosition(tokenId, newPosition);
+            QueuePosition updated = queueService.updateQueuePosition(tokenId, newPosition);
             return ResponseEntity.ok(updated);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

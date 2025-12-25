@@ -29,7 +29,7 @@ public class QueueServiceImpl implements QueueService {
         QueuePosition queuePosition = queueRepository.findByToken_Id(tokenId);
         if (queuePosition == null) {
             Token token = tokenRepository.findById(tokenId)
-                    .orElseThrow(() -> new Exception("Token not found"));
+                    .orElseThrow(() -> new Exception("not found"));
             queuePosition = new QueuePosition(token, newPosition);
         } else {
             queuePosition.setPosition(newPosition);
