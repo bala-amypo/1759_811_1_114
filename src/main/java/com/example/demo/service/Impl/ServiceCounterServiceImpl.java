@@ -18,6 +18,9 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     @Override
     public ServiceCounter addCounter(ServiceCounter counter) {
+        if (counter.getIsActive() == null) {
+            counter.setIsActive(true); // default active
+        }
         return counterRepo.save(counter);
     }
 

@@ -25,10 +25,12 @@ public class TokenLogServiceImpl implements TokenLogService {
     public TokenLog addLog(Long tokenId, String message) {
         Token token = tokenRepo.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
+
         TokenLog log = new TokenLog();
         log.setToken(token);
         log.setMessage(message);
         log.setLoggedAt(LocalDateTime.now());
+
         return logRepo.save(log);
     }
 
