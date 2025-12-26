@@ -2,9 +2,10 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.QueuePosition;
 import com.example.demo.entity.Token;
+import org.springframework.stereotype.Service;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
-import org.springframework.stereotype.Service;
+
 
 @Service
 public class QueueServiceImpl {
