@@ -1,54 +1,49 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.JwtTokenProvider;
-import com.example.demo.entity.User;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.RegisterRequest;
+import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.config.JwtTokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Register and login endpoints")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @PostMapping("/register")
+    @Operation(summary = "Register a new user")
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+
+        User registeredUser = userService.register(user);
+        String token = jwtTokenProvider.generateToken(registeredUser);
+
+        return ResponseEntity.ok(new AuthResponse(token, registeredUser));
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        User user = userService.findByEmail(loginRequest.getEmail());
+    @Operation(summary = "Login and get JWT token")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        User user = userService.login(request.getEmail(), request.getPassword());
+        String token = jwtTokenProvider.generateToken(user);
 
-        if (user == null || !userService.checkPassword(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Invalid email or password");
-        }
-
-        String token = jwtTokenProvider.generateToken(
-                user.getId(),
-                user.getEmail(),
-                user.getRole().name()
-        );
-
-        return ResponseEntity.ok(new JwtResponse(token));
-    }
-
-    // DTOs
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-    }
-
-    public static class JwtResponse {
-        private String token;
-        public JwtResponse(String token) { this.token = token; }
-        public String getToken() { return token; }
-        public void setToken(String token) { this.token = token; }
+        return ResponseEntity.ok(new AuthResponse(token, user));
     }
 }

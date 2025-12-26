@@ -1,42 +1,35 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.QueuePosition;
+import com.example.demo.model.QueuePosition;
 import com.example.demo.service.QueueService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/queue")
+@Tag(name = "Queue", description = "Manage queue positions")
 public class QueueController {
 
     private final QueueService queueService;
 
-    // Constructor Injection
     public QueueController(QueueService queueService) {
         this.queueService = queueService;
     }
 
-    // Update queue position
     @PutMapping("/position/{tokenId}/{newPosition}")
-    public ResponseEntity<?> updateQueuePosition(@PathVariable Long tokenId, @PathVariable int newPosition) {
-        try {
-            QueuePosition updated = queueService.updateQueuePosition(tokenId, newPosition);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @Operation(summary = "Update queue position for a token")
+    public ResponseEntity<QueuePosition> updateQueuePosition(@PathVariable Long tokenId,
+                                                             @PathVariable Integer newPosition) {
+        QueuePosition position = queueService.updateQueuePosition(tokenId, newPosition);
+        return ResponseEntity.ok(position);
     }
 
-    // Get current queue position
     @GetMapping("/position/{tokenId}")
-    public ResponseEntity<?> getPosition(@PathVariable Long tokenId) {
-        try {
-            QueuePosition position = queueService.getPosition(tokenId);
-            return ResponseEntity.ok(position);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @Operation(summary = "Get queue position for a token")
+    public ResponseEntity<QueuePosition> getPosition(@PathVariable Long tokenId) {
+        QueuePosition position = queueService.getPosition(tokenId);
+        return ResponseEntity.ok(position);
     }
 }
