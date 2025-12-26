@@ -2,9 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.QueuePosition;
 import com.example.demo.service.QueueService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/queue")
@@ -12,23 +11,21 @@ public class QueueController {
 
     private final QueueService queueService;
 
+    @Autowired
     public QueueController(QueueService queueService) {
         this.queueService = queueService;
     }
 
-    @GetMapping
-    public List<QueuePosition> getQueue() {
-        return queueService.getQueue();  // Matches updated service method
-    }
-
+    // ------------------ Get Queue Position by Token ------------------
     @GetMapping("/{tokenId}")
-    public QueuePosition getQueuePosition(@PathVariable Long tokenId) {
+    public QueuePosition getPosition(@PathVariable Long tokenId) {
         return queueService.getPosition(tokenId);
     }
 
-    @PutMapping("/{tokenId}/{position}")
-    public QueuePosition updateQueuePosition(@PathVariable Long tokenId,
-                                             @PathVariable int position) {
+    // ------------------ Update Queue Position ------------------
+    @PostMapping("/{tokenId}/update")
+    public QueuePosition updatePosition(@PathVariable Long tokenId,
+                                        @RequestParam Integer position) {
         return queueService.updateQueuePosition(tokenId, position);
     }
 }

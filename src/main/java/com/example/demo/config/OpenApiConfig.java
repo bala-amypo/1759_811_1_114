@@ -16,13 +16,17 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .servers(List.of(new Server().url("https://9326.pro604cr.amypo.ai/")))
+                .servers(List.of(
+                        new Server().url("https://9326.pro604cr.amypo.ai/")  // your required URL
+                ))
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth",
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
-                                        .bearerFormat("JWT")))
+                                        .bearerFormat("JWT")
+                        )
+                )
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
 }
