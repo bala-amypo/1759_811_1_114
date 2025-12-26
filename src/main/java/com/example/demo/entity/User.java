@@ -1,44 +1,47 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    private String name;
+
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    public User() {}
+    private String role = "STAFF"; // default role
 
-    public Long getId() {
-        return id;
-    }
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setPassword(String password) {
-        this.password = password;
+    // equals and hashCode (optional)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
     }
+    @Override
+    public int hashCode() { return Objects.hash(id); }
 }
