@@ -32,16 +32,20 @@ public class TokenServiceImpl implements TokenService {
             throw new IllegalArgumentException("Counter not active");
         }
 
+        // Generate sequential token number per counter
+        int nextNumber = generateTokenNumber(counterId);
+
         Token token = new Token();
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        token.setTokenNumber(generateTokenNumber(counter));
+        token.setTokenNumber(nextNumber);
         token = tokenRepo.save(token);
 
+        // Position is existing waiting count + 1
         List<Token> waiting = tokenRepo
             .findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
-        int pos = waiting.size() + 1;
+        int pos = waiting.size();
 
         QueuePosition qp = new QueuePosition();
         qp.setToken(token);
@@ -92,9 +96,12 @@ public class TokenServiceImpl implements TokenService {
         return false;
     }
 
-    private String generateTokenNumber(ServiceCounter counter) {
-        String prefix = counter.getCounterName() != null ? counter.getCounterName() : "C";
-        long ts = System.currentTimeMillis() % 100000;
-        return prefix + "-" + ts;
+    /**
+     * Generate sequential token number per counter.
+     * Uses the count of existing tokens for that counter + 1.
+     */
+    private int generateTokenNumber(Long counterId) {
+        List<Token> allTokens = tokenRepo.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
+        return allTokens.size() + 1;
     }
 }
