@@ -7,7 +7,7 @@ import com.example.demo.repository.TokenRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@service
+@Service
 public class TokenLogServiceImpl {
 
     private final TokenLogRepository logRepository;
