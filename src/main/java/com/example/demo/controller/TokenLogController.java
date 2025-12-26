@@ -23,7 +23,7 @@ public class TokenLogController {
         return logService.addLog(tokenId, message);
     }
 
-    // Get all logs for a token, ordered by timestamp
+    // Get all logs for a token
     @GetMapping("/{tokenId}")
     public List<TokenLog> getLogs(@PathVariable Long tokenId) {
         return logService.getLogs(tokenId);

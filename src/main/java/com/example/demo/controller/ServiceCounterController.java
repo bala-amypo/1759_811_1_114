@@ -16,10 +16,14 @@ public class ServiceCounterController {
         this.counterService = counterService;
     }
 
-    // Add a new counter
+    // Add a new service counter
     @PostMapping("/add")
-    public ServiceCounter addCounter(@RequestBody ServiceCounter counter) {
-        return counterService.addCounter(counter);
+    public ServiceCounter addCounter(@RequestParam String counterName,
+                                     @RequestParam String department) {
+        ServiceCounter sc = new ServiceCounter();
+        sc.setCounterName(counterName);
+        sc.setDepartment(department);
+        return counterService.addCounter(sc);
     }
 
     // Get all active counters
