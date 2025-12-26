@@ -4,7 +4,7 @@ import com.example.demo.entity.QueuePosition;
 
 public interface QueueService {
 
-    QueuePosition updateQueuePosition(Long tokenId, Integer newPosition);
+    QueuePosition updateQueuePosition(Long tokenId, int position);
 
     QueuePosition getPosition(Long tokenId);
 }
