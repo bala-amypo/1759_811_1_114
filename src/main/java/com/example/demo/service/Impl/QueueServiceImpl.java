@@ -13,7 +13,7 @@ public class QueueServiceImpl implements QueueService {
     private final QueuePositionRepository queuePositionRepository;
     private final TokenRepository tokenRepository;
 
-    // ✅ Constructor Injection (exact)
+  
     public QueueServiceImpl(QueuePositionRepository queuePositionRepository,
                             TokenRepository tokenRepository) {
         this.queuePositionRepository = queuePositionRepository;

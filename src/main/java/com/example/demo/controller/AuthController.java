@@ -41,7 +41,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login and get JWT token")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        // Cast to UserServiceImpl to access authenticateUser
+       
         User user = ((com.example.demo.service.UserServiceImpl) userService)
                 .authenticateUser(request.getEmail(), request.getPassword());
 

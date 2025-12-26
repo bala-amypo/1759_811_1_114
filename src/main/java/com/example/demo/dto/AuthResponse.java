@@ -11,7 +11,7 @@ public class AuthResponse {
         this.user = user;
     }
 
-    // getters and setters
+    
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
     public User getUser() { return user; }

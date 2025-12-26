@@ -14,7 +14,7 @@ public class TokenLogServiceImpl implements TokenLogService {
     private final TokenLogRepository tokenLogRepository;
     private final TokenRepository tokenRepository;
 
-    // ✅ Constructor Injection (exact)
+    
     public TokenLogServiceImpl(TokenLogRepository tokenLogRepository,
                                TokenRepository tokenRepository) {
         this.tokenLogRepository = tokenLogRepository;

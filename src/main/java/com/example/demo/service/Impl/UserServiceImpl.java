@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email"); // ✔ "Email"
+            throw new RuntimeException("Email"); 
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("not found")); // ✔ "not found"
+                .orElseThrow(() -> new RuntimeException("not found")); 
     }
 
     // Helper method for AuthController login

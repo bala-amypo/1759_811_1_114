@@ -11,7 +11,6 @@ public class ServiceCounterServiceImpl implements ServiceCounterService {
 
     private final ServiceCounterRepository serviceCounterRepository;
 
-    // ✅ Constructor Injection (exact)
     public ServiceCounterServiceImpl(ServiceCounterRepository serviceCounterRepository) {
         this.serviceCounterRepository = serviceCounterRepository;
     }

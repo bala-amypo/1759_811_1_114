@@ -14,7 +14,6 @@ public class TokenServiceImpl implements TokenService {
     private final TokenLogRepository tokenLogRepository;
     private final QueuePositionRepository queuePositionRepository;
 
-    // ✅ Constructor Injection (exact)
     public TokenServiceImpl(TokenRepository tokenRepository,
                             ServiceCounterRepository serviceCounterRepository,
                             TokenLogRepository tokenLogRepository,
