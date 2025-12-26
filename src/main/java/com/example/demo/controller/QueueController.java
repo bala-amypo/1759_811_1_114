@@ -14,14 +14,14 @@ public class QueueController {
         this.queueService = queueService;
     }
 
-    // Get the queue position of a token
+    // Get the current position of a token
     @GetMapping("/{tokenId}")
     public QueuePosition getPosition(@PathVariable Long tokenId) {
         return queueService.getPosition(tokenId);
     }
 
-    // Update the queue position of a token
-    @PutMapping("/{tokenId}/update")
+    // Update the position of a token in the queue
+    @PutMapping("/{tokenId}/position")
     public QueuePosition updatePosition(@PathVariable Long tokenId,
                                         @RequestParam Integer position) {
         return queueService.updateQueuePosition(tokenId, position);
