@@ -11,21 +11,23 @@ import java.util.List;
 @RequestMapping("/counters")
 public class ServiceCounterController {
 
-    private final ServiceCounterService serviceCounterService;
+    private final ServiceCounterService counterService;
 
-    public ServiceCounterController(ServiceCounterService serviceCounterService) {
-        this.serviceCounterService = serviceCounterService;
+    public ServiceCounterController(ServiceCounterService counterService) {
+        this.counterService = counterService;
     }
 
-    @PostMapping
-    public ResponseEntity<ServiceCounter> addCounter(
-            @RequestBody ServiceCounter counter
-    ) {
-        return ResponseEntity.ok(serviceCounterService.addCounter(counter));
+    // Add a new counter
+    @PostMapping("/add")
+    public ResponseEntity<ServiceCounter> addCounter(@RequestBody ServiceCounter counter) {
+        ServiceCounter saved = counterService.addCounter(counter);
+        return ResponseEntity.ok(saved);
     }
 
+    // Get all active counters
     @GetMapping("/active")
     public ResponseEntity<List<ServiceCounter>> getActiveCounters() {
-        return ResponseEntity.ok(serviceCounterService.getActiveCounters());
+        List<ServiceCounter> list = counterService.getActiveCounters();
+        return ResponseEntity.ok(list);
     }
 }
