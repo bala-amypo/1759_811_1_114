@@ -8,24 +8,28 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/logs")
+@RequestMapping("/token-logs")
 public class TokenLogController {
 
-    private final TokenLogService logService;
+    private final TokenLogService tokenLogService;
 
-    public TokenLogController(TokenLogService logService) {
-        this.logService = logService;
+    public TokenLogController(TokenLogService tokenLogService) {
+        this.tokenLogService = tokenLogService;
     }
 
+    // Get all logs
+    @GetMapping
+    public ResponseEntity<List<TokenLog>> getAllLogs() {
+        return ResponseEntity.ok(tokenLogService.getAllLogs());
+    }
+
+    // Add a new log message for a token
     @PostMapping("/{tokenId}")
-    public ResponseEntity<TokenLog> addLog(@PathVariable Long tokenId, @RequestParam String message) {
-        TokenLog log = logService.addLog(tokenId, message);
+    public ResponseEntity<TokenLog> logMessage(
+            @PathVariable Long tokenId,
+            @RequestParam String message
+    ) {
+        TokenLog log = tokenLogService.logMessage(tokenId, message);
         return ResponseEntity.ok(log);
-    }
-
-    @GetMapping("/{tokenId}")
-    public ResponseEntity<List<TokenLog>> getLogs(@PathVariable Long tokenId) {
-        List<TokenLog> logs = logService.getLogs(tokenId);
-        return ResponseEntity.ok(logs);
     }
 }
