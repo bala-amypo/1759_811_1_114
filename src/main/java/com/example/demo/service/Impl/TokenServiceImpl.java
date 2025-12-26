@@ -2,6 +2,8 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Token;
 import com.example.demo.entity.ServiceCounter;
+import com.example.demo.entity.TokenLog;
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.TokenLogRepository;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -45,11 +46,8 @@ public class TokenServiceImpl implements TokenService {
         token.setIssuedAt(LocalDateTime.now());
         token = tokenRepository.save(token);
 
-        // Create initial queue position
-        queueRepository.save(new com.example.demo.entity.QueuePosition(token, 1));
-
-        // Log token creation
-        logRepository.save(new com.example.demo.entity.TokenLog(token, "Token issued"));
+        queueRepository.save(new QueuePosition(token, 1));
+        logRepository.save(new TokenLog(token, "Token issued"));
 
         return token;
     }
@@ -70,7 +68,7 @@ public class TokenServiceImpl implements TokenService {
         }
 
         tokenRepository.save(token);
-        logRepository.save(new com.example.demo.entity.TokenLog(token, "Status updated to " + newStatus));
+        logRepository.save(new TokenLog(token, "Status updated to " + newStatus));
         return token;
     }
 

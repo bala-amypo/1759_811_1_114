@@ -11,23 +11,35 @@ public class TokenLog {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "token_id")
     private Token token;
 
-    private String message;
+    private String action;
 
-    private LocalDateTime loggedAt = LocalDateTime.now(); // auto timestamp
+    private LocalDateTime loggedAt;
 
-    // ---------------- Getters and Setters ----------------
+    public TokenLog() {}
+
+    // Constructor for convenience
+    public TokenLog(Token token, String action) {
+        this.token = token;
+        this.action = action;
+        this.loggedAt = LocalDateTime.now();
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
+
     public void setId(Long id) { this.id = id; }
 
     public Token getToken() { return token; }
+
     public void setToken(Token token) { this.token = token; }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public String getAction() { return action; }
+
+    public void setAction(String action) { this.action = action; }
 
     public LocalDateTime getLoggedAt() { return loggedAt; }
+
     public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
 }

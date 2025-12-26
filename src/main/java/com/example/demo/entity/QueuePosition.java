@@ -12,14 +12,25 @@ public class QueuePosition {
     @OneToOne
     private Token token;
 
-    private Integer position;
+    private int position;
 
+    public QueuePosition() {}
+
+    public QueuePosition(Token token, int position) {
+        this.token = token;
+        this.position = position;
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
+
     public void setId(Long id) { this.id = id; }
 
     public Token getToken() { return token; }
+
     public void setToken(Token token) { this.token = token; }
 
-    public Integer getPosition() { return position; }
-    public void setPosition(Integer position) { this.position = position; }
+    public int getPosition() { return position; }
+
+    public void setPosition(int position) { this.position = position; }
 }
