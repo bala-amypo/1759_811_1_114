@@ -17,16 +17,13 @@ public class TokenLogController {
         this.logService = logService;
     }
 
-    // Add a log for a token
     @PostMapping("/{tokenId}")
-    public ResponseEntity<TokenLog> addLog(@PathVariable Long tokenId,
-                                           @RequestParam String message) {
+    public ResponseEntity<TokenLog> addLog(@PathVariable Long tokenId, @RequestParam String message) {
         TokenLog log = logService.addLog(tokenId, message);
         return ResponseEntity.ok(log);
     }
 
-    // Get all logs for a token
-    @GetMapping("/{tokenId}/all")
+    @GetMapping("/{tokenId}")
     public ResponseEntity<List<TokenLog>> getLogs(@PathVariable Long tokenId) {
         List<TokenLog> logs = logService.getLogs(tokenId);
         return ResponseEntity.ok(logs);
