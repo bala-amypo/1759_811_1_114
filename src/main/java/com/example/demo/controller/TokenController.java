@@ -1,43 +1,60 @@
+// src/main/java/com/example/demo/controller/TokenController.java
 package com.example.demo.controller;
 
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.entity.Token;
-import com.example.demo.service.TokenService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.entity.TokenLog;
+import com.example.demo.repository.*;
+import com.example.demo.service.impl.*;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/tokens")
+@RequestMapping("/api/tokens")
 public class TokenController {
 
-    private final TokenService tokenService;
+    private final TokenServiceImpl tokenService;
+    private final QueueServiceImpl queueService;
+    private final TokenLogServiceImpl logService;
 
-    public TokenController(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public TokenController(TokenRepository tokenRepo,
+                           ServiceCounterRepository counterRepo,
+                           TokenLogRepository logRepo,
+                           QueuePositionRepository queueRepo) {
+        this.tokenService = new TokenServiceImpl(tokenRepo, counterRepo, logRepo, queueRepo);
+        this.queueService = new QueueServiceImpl(queueRepo, tokenRepo);
+        this.logService = new TokenLogServiceImpl(logRepo, tokenRepo);
     }
 
     @PostMapping("/issue/{counterId}")
-    public ResponseEntity<Token> issueToken(@PathVariable Long counterId) {
-        Token token = tokenService.issueToken(counterId);
-        return ResponseEntity.ok(token);
+    public Token issue(@PathVariable Long counterId) {
+        return tokenService.issueToken(counterId);
     }
 
-    @GetMapping("/{tokenId}")
-    public ResponseEntity<Token> getToken(@PathVariable Long tokenId) {
-        Token token = tokenService.getToken(tokenId);
-        return ResponseEntity.ok(token);
+    @PostMapping("/{tokenId}/status")
+    public Token updateStatus(@PathVariable Long tokenId, @RequestParam String status) {
+        return tokenService.updateStatus(tokenId, status);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Token>> getAllTokens() {
-        List<Token> tokens = tokenService.getAllTokens();
-        return ResponseEntity.ok(tokens);
+    @PostMapping("/{tokenId}/queue")
+    public QueuePosition updateQueue(@PathVariable Long tokenId, @RequestParam int position) {
+        return queueService.updateQueuePosition(tokenId, position);
     }
 
-    @PutMapping("/{tokenId}/status")
-    public ResponseEntity<Token> updateStatus(@PathVariable Long tokenId, @RequestParam String status) {
-        Token updated = tokenService.updateStatus(tokenId, status);
-        return ResponseEntity.ok(updated);
+    @GetMapping("/{tokenId}/queue")
+    public QueuePosition getQueue(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
+    }
+
+    @PostMapping("/{tokenId}/logs")
+    public TokenLog addLog(@PathVariable Long tokenId, @RequestParam String message) {
+        return logService.addLog(tokenId, message);
+    }
+
+    @GetMapping("/{tokenId}/logs")
+    public List<TokenLog> getLogs(@PathVariable Long tokenId) {
+        return logService.getLogs(tokenId);
     }
 }
