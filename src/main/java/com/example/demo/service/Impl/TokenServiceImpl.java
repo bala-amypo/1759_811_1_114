@@ -28,10 +28,10 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token issueToken(Long counterId) {
         ServiceCounter counter = serviceCounterRepository.findById(counterId)
-                .orElseThrow(() -> new RuntimeException("Service counter not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         if (counter.getIsActive() == null || !counter.getIsActive()) {
-            throw new RuntimeException("Counter not active");
+            throw new RuntimeException("not active");
         }
 
         Token token = new Token();
@@ -59,7 +59,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token updateStatus(Long tokenId, String status) {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         String currentStatus = token.getStatus();
         if ("WAITING".equals(currentStatus) && !"SERVING".equals(status) ||
@@ -83,6 +83,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
     }
 }

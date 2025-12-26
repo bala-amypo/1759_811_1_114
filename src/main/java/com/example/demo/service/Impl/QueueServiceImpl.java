@@ -27,7 +27,7 @@ public class QueueServiceImpl implements QueueService {
         }
 
         QueuePosition queuePosition = queuePositionRepository.findByToken_Id(tokenId)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         queuePosition.setPosition(newPosition);
         queuePosition.setUpdatedAt(LocalDateTime.now());
@@ -37,6 +37,6 @@ public class QueueServiceImpl implements QueueService {
     @Override
     public QueuePosition getPosition(Long tokenId) {
         return queuePositionRepository.findByToken_Id(tokenId)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
     }
 }
