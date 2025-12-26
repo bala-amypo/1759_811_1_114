@@ -5,5 +5,7 @@ import java.util.List;
 
 public interface TokenLogService {
     TokenLog addLog(Long tokenId, String message);
-    List<TokenLog> getLogs(Long tokenId);
+
+    // RENAMED to match controller/testcases
+    List<TokenLog> getLogsByToken(Long tokenId);
 }

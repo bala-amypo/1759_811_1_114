@@ -35,7 +35,8 @@ public class TokenLogServiceImpl implements TokenLogService {
     }
 
     @Override
-    public List<TokenLog> getLogs(Long tokenId) {
+    public List<TokenLog> getLogsByToken(Long tokenId) {
+        // Renamed method to match controller/testcases
         return logRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
     }
 }

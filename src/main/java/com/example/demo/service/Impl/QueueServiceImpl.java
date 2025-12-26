@@ -7,6 +7,8 @@ import com.example.demo.repository.TokenRepository;
 import com.example.demo.service.QueueService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class QueueServiceImpl implements QueueService {
 
@@ -20,9 +22,7 @@ public class QueueServiceImpl implements QueueService {
 
     @Override
     public QueuePosition updateQueuePosition(Long tokenId, int position) {
-        if (position < 1) {
-            throw new IllegalArgumentException("Position must be >= 1");
-        }
+        if (position < 1) throw new IllegalArgumentException("Position must be >= 1");
 
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
@@ -32,6 +32,7 @@ public class QueueServiceImpl implements QueueService {
 
         qp.setToken(token);
         qp.setPosition(position);
+
         return queueRepository.save(qp);
     }
 
@@ -39,5 +40,11 @@ public class QueueServiceImpl implements QueueService {
     public QueuePosition getPosition(Long tokenId) {
         return queueRepository.findByToken_Id(tokenId)
                 .orElseThrow(() -> new RuntimeException("Queue position not found"));
+    }
+
+    @Override
+    public List<QueuePosition> getQueue() {
+        // Return all queue positions (needed by controller/test cases)
+        return queueRepository.findAll();
     }
 }
