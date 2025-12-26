@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.TokenLog;
-import com.example.demo.service.impl.TokenLogServiceImpl;
+import com.example.demo.service.TokenLogService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,17 +10,20 @@ import java.util.List;
 @RequestMapping("/logs")
 public class TokenLogController {
 
-    private final TokenLogServiceImpl logService;
+    private final TokenLogService logService;
 
-    public TokenLogController(TokenLogServiceImpl logService) {
+    public TokenLogController(TokenLogService logService) {
         this.logService = logService;
     }
 
-    @PostMapping("/add/{tokenId}")
-    public TokenLog addLog(@PathVariable Long tokenId, @RequestParam String message) {
+    // Add a log entry for a token
+    @PostMapping("/{tokenId}/add")
+    public TokenLog addLog(@PathVariable Long tokenId,
+                           @RequestParam String message) {
         return logService.addLog(tokenId, message);
     }
 
+    // Get all logs for a token, ordered by timestamp
     @GetMapping("/{tokenId}")
     public List<TokenLog> getLogs(@PathVariable Long tokenId) {
         return logService.getLogs(tokenId);

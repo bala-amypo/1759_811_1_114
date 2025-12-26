@@ -14,15 +14,12 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // Registration endpoint
     @PostMapping("/register")
     public User register(@RequestBody User user) {
+        // Ensure role is set to default if missing
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("STAFF");
+        }
         return userService.register(user);
     }
-
-    // Optional login endpoint (not required by test cases)
-    // @PostMapping("/login")
-    // public String login(@RequestBody User user) {
-    //     return userService.login(user);
-    // }
 }
