@@ -42,12 +42,14 @@ public class TokenServiceImpl implements TokenService {
 
         Token savedToken = tokenRepository.save(token);
 
+        // Create QueuePosition
         QueuePosition position = new QueuePosition();
         position.setToken(savedToken);
-        position.setPosition(1); 
+        position.setPosition(1);
         position.setUpdatedAt(LocalDateTime.now());
         queuePositionRepository.save(position);
 
+        // Create TokenLog
         TokenLog log = new TokenLog(savedToken, "Token issued");
         tokenLogRepository.save(log);
 
@@ -55,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token updateToken(Long tokenId, String status) {
+    public Token updateStatus(Long tokenId, String status) {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 

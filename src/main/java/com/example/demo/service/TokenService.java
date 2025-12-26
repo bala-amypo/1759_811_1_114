@@ -6,7 +6,7 @@ public interface TokenService {
 
     Token issueToken(Long counterId);
 
-    Token updateToken(Long tokenId, String status);
+    Token updateStatus(Long tokenId, String status);
 
     Token getToken(Long tokenId);
 }

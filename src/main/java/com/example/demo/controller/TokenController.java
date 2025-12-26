@@ -27,8 +27,8 @@ public class TokenController {
 
     @PutMapping("/status/{tokenId}")
     @Operation(summary = "Update token status")
-    public ResponseEntity<Token> updateToken(@PathVariable Long tokenId, @RequestParam String status) {
-        Token token = tokenService.updateToken(tokenId, status);
+    public ResponseEntity<Token> updateStatus(@PathVariable Long tokenId, @RequestParam String status) {
+        Token token = tokenService.updateStatus(tokenId, status);
         return ResponseEntity.ok(token);
     }
 
