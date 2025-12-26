@@ -41,9 +41,9 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Login and get JWT token")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        // Cast to UserServiceImpl to use authenticate helper
+        // Cast to UserServiceImpl to access authenticateUser
         User user = ((com.example.demo.service.UserServiceImpl) userService)
-                .authenticate(request.getEmail(), request.getPassword());
+                .authenticateUser(request.getEmail(), request.getPassword());
 
         String token = jwtTokenProvider.generateToken(user);
 
