@@ -4,9 +4,10 @@ import com.example.demo.entity.Token;
 import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
-
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@service
 public class TokenLogServiceImpl {
 
     private final TokenLogRepository logRepository;
