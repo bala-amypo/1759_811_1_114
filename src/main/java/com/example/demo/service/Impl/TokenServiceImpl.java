@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.*;
+import com.example.demo.entity.*;
 import com.example.demo.repository.*;
 import com.example.demo.util.TokenNumberGenerator;
 import org.springframework.stereotype.Service;
