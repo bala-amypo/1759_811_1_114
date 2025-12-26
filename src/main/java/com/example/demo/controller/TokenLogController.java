@@ -1,0 +1,23 @@
+package com.example.demo.controller;
+
+import com.example.demo.entity.TokenLog;
+import com.example.demo.service.TokenLogService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/logs")
+public class TokenLogController {
+
+    private final TokenLogService logService;
+
+    public TokenLogController(TokenLogService logService) {
+        this.logService = logService;
+    }
+
+    @GetMapping("/{tokenId}")
+    public List<TokenLog> getLogs(@PathVariable Long tokenId) {
+        return logService.getLogsByToken(tokenId);
+    }
+}
