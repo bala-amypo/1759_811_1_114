@@ -1,11 +1,13 @@
 package com.example.demo.config;
 
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
 import java.util.Date;
 
+@Component
 public class JwtTokenProvider {
 
     private final Key key;
