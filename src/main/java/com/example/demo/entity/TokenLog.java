@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "token_logs")
 public class TokenLog {
 
     @Id
@@ -11,13 +12,17 @@ public class TokenLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "token_id", nullable = false)
     private Token token;
 
-    private String message;  // Service uses setMessage
+    @Column(nullable = false)
+    private String message;
 
+    @Column(name = "logged_at", nullable = false)
     private LocalDateTime loggedAt;
 
-    public TokenLog() {}
+    public TokenLog() {
+    }
 
     public TokenLog(Token token, String message) {
         this.token = token;
@@ -25,16 +30,35 @@ public class TokenLog {
         this.loggedAt = LocalDateTime.now();
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Token getToken() { return token; }
-    public void setToken(Token token) { this.token = token; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+    public Token getToken() {
+        return token;
+    }
 
-    public LocalDateTime getLoggedAt() { return loggedAt; }
-    public void setLoggedAt(LocalDateTime loggedAt) { this.loggedAt = loggedAt; }
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
+    }
+
+    public void setLoggedAt(LocalDateTime loggedAt) {
+        this.loggedAt = loggedAt;
+    }
 }
