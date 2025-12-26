@@ -22,7 +22,7 @@ public class OpenApiConfig {
                         .version("1.0")
                         .description("Swagger UI for Token Management"))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080") // local server
+                        new Server().url("https://9326.pro604cr.amypo.ai/") // production URL
                 ))
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth",
