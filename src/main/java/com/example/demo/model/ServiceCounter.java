@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 
@@ -13,24 +13,29 @@ public class ServiceCounter {
 
     private String department;
 
-    private Boolean isActive;
+    private Boolean isActive = true;
 
-    // ✅ No-args constructor (required)
     public ServiceCounter() {
     }
 
-    // 🔹 Getters and Setters (names must match exactly)
+    public ServiceCounter(String counterName, String department, Boolean isActive) {
+        this.counterName = counterName;
+        this.department = department;
+        this.isActive = isActive;
+    }
+
+    // -------- Getters & Setters --------
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getCounterName() {
         return counterName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setCounterName(String counterName) {
@@ -40,7 +45,7 @@ public class ServiceCounter {
     public String getDepartment() {
         return department;
     }
-
+    
     public void setDepartment(String department) {
         this.department = department;
     }
@@ -48,7 +53,7 @@ public class ServiceCounter {
     public Boolean getIsActive() {
         return isActive;
     }
-
+    
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
