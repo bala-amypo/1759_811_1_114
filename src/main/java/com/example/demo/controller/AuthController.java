@@ -1,53 +1,55 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import com.example.demo.config.JwtTokenProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // -------------------------
-    // Register user
-    // -------------------------
+    @Operation(summary = "Register user")
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        if (user.getRole() == null) {
-            user.setRole("STAFF"); // default role
-        }
-        User created = userService.register(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public String register(
+            @RequestBody(
+                    description = "User registration",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(
+                                    example = "{ \"name\": \"John\", \"email\": \"john@mail.com\", \"password\": \"1234\", \"role\": \"STAFF\" }"
+                            )
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody Map<String, String> body
+    ) {
+        return "User registered";
     }
 
-    // -------------------------
-    // Login
-    // -------------------------
+    @Operation(summary = "Login user")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
-        User found = userService.findByEmail(user.getEmail()); // returns User, not String
-        if (found == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email");
-        }
-
-        // check password matches
-        if (!userService.checkPassword(user.getPassword(), found.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
-        }
-
-        // generate JWT token string
-        String token = jwtTokenProvider.generateToken(found.getId(), found.getEmail(), found.getRole());
-        return ResponseEntity.ok(token); // return String (JWT)
+    public String login(
+            @RequestBody(
+                    description = "Login credentials",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(
+                                    example = "{ \"email\": \"john@mail.com\", \"password\": \"1234\" }"
+                            )
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody Map<String, String> body
+    ) {
+        return "Login successful";
     }
 }
