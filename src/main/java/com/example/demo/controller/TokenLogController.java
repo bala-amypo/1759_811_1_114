@@ -1,44 +1,36 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.TokenLog;
+import com.example.demo.model.TokenLog;
 import com.example.demo.service.TokenLogService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/logs")
+@Tag(name = "Token Logs", description = "Manage token logs")
 public class TokenLogController {
 
     private final TokenLogService tokenLogService;
 
-    // Constructor Injection
     public TokenLogController(TokenLogService tokenLogService) {
         this.tokenLogService = tokenLogService;
     }
 
-    // Create a new log
     @PostMapping("/{tokenId}")
-    public ResponseEntity<?> addLog(@PathVariable Long tokenId, @RequestBody Map<String, String> body) {
-        try {
-            String message = body.get("message");
-            TokenLog log = tokenLogService.addLog(tokenId, message);
-            return ResponseEntity.ok(log);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @Operation(summary = "Add a log for a token")
+    public ResponseEntity<TokenLog> addLog(@PathVariable Long tokenId, @RequestBody String logMessage) {
+        TokenLog log = tokenLogService.addLog(tokenId, logMessage);
+        return ResponseEntity.ok(log);
     }
 
-    // List all logs for a token
     @GetMapping("/{tokenId}")
-    public ResponseEntity<?> getLogs(@PathVariable Long tokenId) {
-        try {
-            List<TokenLog> logs = tokenLogService.getLogs(tokenId);
-            return ResponseEntity.ok(logs);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    @Operation(summary = "Get all logs for a token")
+    public ResponseEntity<List<TokenLog>> getLogs(@PathVariable Long tokenId) {
+        List<TokenLog> logs = tokenLogService.getLogs(tokenId);
+        return ResponseEntity.ok(logs);
     }
 }
