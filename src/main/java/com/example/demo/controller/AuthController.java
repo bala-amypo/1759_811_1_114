@@ -1,8 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import com.example.demo.config.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,46 +14,43 @@ import java.util.Map;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtProvider;
 
     @Autowired
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserService userService, JwtTokenProvider jwtProvider) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtProvider = jwtProvider;
     }
 
-    // ------------------ Register ------------------
+    // ------------------ Register User ------------------
     @PostMapping("/register")
-    public User register(@RequestParam String name,
-                         @RequestParam String email,
+    public User register(@RequestParam String email,
                          @RequestParam String password,
-                         @RequestParam(defaultValue = "STAFF") String role) {
-
+                         @RequestParam(defaultValue = "STAFF") String role,
+                         @RequestParam(required = false) String name) {
         User u = new User();
-        u.setName(name);
         u.setEmail(email);
         u.setPassword(password);
         u.setRole(role);
-
-        return userService.register(u); // hashed inside service
+        u.setName(name);
+        return userService.register(u);
     }
 
-    // ------------------ Login ------------------
+    // ------------------ Login User ------------------
     @PostMapping("/login")
     public Map<String, String> login(@RequestParam String email,
                                      @RequestParam String password) {
-
         User user = userService.findByEmail(email);
 
         if (user == null) {
-            throw new RuntimeException("Invalid email or password");
+            throw new RuntimeException("User not found");
         }
 
         if (!userService.checkPassword(password, user.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+            throw new RuntimeException("Invalid password");
         }
 
-        String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail(), user.getRole());
+        String token = jwtProvider.generateToken(user.getId(), user.getEmail(), user.getRole());
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         return response;
