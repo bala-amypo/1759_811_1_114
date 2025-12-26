@@ -4,7 +4,9 @@ import com.example.demo.entity.QueuePosition;
 import com.example.demo.entity.Token;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class QueueServiceImpl {
 
     private final QueuePositionRepository queueRepository;
