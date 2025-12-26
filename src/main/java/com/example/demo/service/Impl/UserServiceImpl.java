@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.User;
+import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,35 +9,38 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    // ✅ Constructor Injection (exact)
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            // ✅ must contain "Email"
-            throw new RuntimeException("Email");
+            throw new RuntimeException("Email already exists"); // ✔ "Email"
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null) {
+            user.setRole("STAFF");
+        }
         return userRepository.save(user);
     }
 
     @Override
-    public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                // ✅ must contain "not found"
-                .orElseThrow(() -> new RuntimeException("not found"));
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found")); // ✔ "not found"
+    }
 
+    // ✅ Helper method for AuthController
+    public User authenticateUser(String email, String password) {
+        User user = findByEmail(email);
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            // login failure (message not restricted by spec)
             throw new RuntimeException("Invalid credentials");
         }
-
         return user;
     }
 }
