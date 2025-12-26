@@ -17,7 +17,7 @@ public class JwtTokenProvider {
     // Generate token with userid, email, role
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userid", user.getUserid());
+        claims.put("userid", user.getUserId());
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
 
