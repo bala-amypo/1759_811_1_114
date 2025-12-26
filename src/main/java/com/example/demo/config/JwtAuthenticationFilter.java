@@ -48,7 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = userService.findByEmail(email);
 
-            // Use two-argument validateToken method
             if (jwtTokenProvider.validateToken(token, user)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(user, null, null);
