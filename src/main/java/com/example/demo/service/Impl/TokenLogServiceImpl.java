@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Token;
-import com.example.demo.model.TokenLog;
+import com.example.demo.entity.Token;
+import com.example.demo.entity.TokenLog;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
 import org.springframework.stereotype.Service;
