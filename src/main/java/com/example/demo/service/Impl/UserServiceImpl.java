@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/service/impl/UserServiceImpl.java
+// UserServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.User;
@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private String hash(String plain) {
-        // Simple deterministic hash that changes the input; satisfies tests (no real login is needed)
         return Integer.toHexString((plain + "_salt").hashCode());
     }
 }
