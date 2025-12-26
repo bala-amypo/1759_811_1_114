@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("not found")); 
     }
 
-    // Helper method for AuthController login
+    
     public User authenticateUser(String email, String password) {
         User user = findByEmail(email);
         if (!passwordEncoder.matches(password, user.getPassword())) {
