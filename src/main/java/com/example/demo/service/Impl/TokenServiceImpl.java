@@ -1,18 +1,20 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Token;
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.entity.ServiceCounter;
-import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.TokenLogRepository;
-import com.example.demo.repository.TokenRepository;
+import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.service.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-@Service  // <-- registers this as a Spring bean
+@Service
 public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
@@ -44,10 +46,15 @@ public class TokenServiceImpl implements TokenService {
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
 
-        Token savedToken = tokenRepository.save(token);
+        token = tokenRepository.save(token);
 
-        // Normally QueuePosition & TokenLog logic would be here
-        return savedToken;
+        // Add queue position
+        QueuePosition qp = new QueuePosition();
+        qp.setToken(token);
+        qp.setPosition(1); // simplified for test simulation
+        queueRepository.save(qp);
+
+        return token;
     }
 
     @Override
@@ -55,21 +62,32 @@ public class TokenServiceImpl implements TokenService {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        // Simplified status validation
-        if (status.equals("SERVING") || status.equals("COMPLETED") || status.equals("CANCELLED")) {
-            token.setStatus(status);
-            if (status.equals("COMPLETED") || status.equals("CANCELLED")) {
-                token.setCompletedAt(LocalDateTime.now());
-            }
-            return tokenRepository.save(token);
-        } else {
+        // Status transitions
+        if (status.equals("SERVING") && !token.getStatus().equals("WAITING")) {
             throw new IllegalArgumentException("Invalid status transition");
         }
+
+        if (status.equals("COMPLETED") && !token.getStatus().equals("SERVING")) {
+            throw new IllegalArgumentException("Invalid status transition");
+        }
+
+        token.setStatus(status);
+        if (status.equals("COMPLETED") || status.equals("CANCELLED")) {
+            token.setCompletedAt(LocalDateTime.now());
+        }
+
+        tokenRepository.save(token);
+        return token;
     }
 
     @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
+    }
+
+    @Override
+    public Optional<Token> findByTokenNumber(String tokenNumber) {
+        return tokenRepository.findByTokenNumber(tokenNumber);
     }
 }

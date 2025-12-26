@@ -4,7 +4,7 @@ import com.example.demo.entity.Token;
 import com.example.demo.service.TokenService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tokens")
@@ -16,15 +16,16 @@ public class TokenController {
         this.tokenService = tokenService;
     }
 
-    // Issue a token for a counter
+    // Issue a new token for a counter
     @PostMapping("/issue/{counterId}")
     public Token issueToken(@PathVariable Long counterId) {
         return tokenService.issueToken(counterId);
     }
 
-    // Update status of a token
+    // Update token status
     @PutMapping("/{tokenId}/status")
-    public Token updateStatus(@PathVariable Long tokenId, @RequestParam String status) {
+    public Token updateStatus(@PathVariable Long tokenId,
+                              @RequestParam String status) {
         return tokenService.updateStatus(tokenId, status);
     }
 
@@ -34,10 +35,9 @@ public class TokenController {
         return tokenService.getToken(tokenId);
     }
 
-    // Optional: find by token number (for Swagger clarity)
+    // Get token by token number (required by test cases)
     @GetMapping("/by-number/{tokenNumber}")
-    public Token getTokenByNumber(@PathVariable String tokenNumber) {
-        return tokenService.findByTokenNumber(tokenNumber)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+    public Optional<Token> findByTokenNumber(@PathVariable String tokenNumber) {
+        return tokenService.findByTokenNumber(tokenNumber);
     }
 }
