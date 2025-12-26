@@ -1,50 +1,42 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
-import com.example.demo.entity.QueuePosition;
-import com.example.demo.entity.Token;
+import com.example.demo.model.QueuePosition;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
-import com.example.demo.service.QueueService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
+
 @Service
 public class QueueServiceImpl implements QueueService {
 
-    private final QueuePositionRepository queueRepository;
+    private final QueuePositionRepository queuePositionRepository;
     private final TokenRepository tokenRepository;
 
-    // Constructor Injection
-    public QueueServiceImpl(QueuePositionRepository queueRepository, TokenRepository tokenRepository) {
-        this.queueRepository = queueRepository;
+    // ✅ Constructor Injection (exact)
+    public QueueServiceImpl(QueuePositionRepository queuePositionRepository,
+                            TokenRepository tokenRepository) {
+        this.queuePositionRepository = queuePositionRepository;
         this.tokenRepository = tokenRepository;
     }
 
     @Override
-    public QueuePosition updateQueuePosition(Long tokenId, int newPosition) throws Exception {
+    public QueuePosition updateQueuePosition(Long tokenId, Integer newPosition) {
         if (newPosition < 1) {
-            throw new Exception("Position must be >= 1");
+            throw new RuntimeException("Position must be >= 1");
         }
 
-        QueuePosition queuePosition = queueRepository.findByToken_Id(tokenId);
-        if (queuePosition == null) {
-            Token token = tokenRepository.findById(tokenId)
-                    .orElseThrow(() -> new Exception("not found"));
-            queuePosition = new QueuePosition(token, newPosition);
-        } else {
-            queuePosition.setPosition(newPosition);
-        }
+        QueuePosition queuePosition = queuePositionRepository.findByToken_Id(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        queuePosition.setUpdatedAt(java.time.LocalDateTime.now());
-        return queueRepository.save(queuePosition);
+        queuePosition.setPosition(newPosition);
+        queuePosition.setUpdatedAt(LocalDateTime.now());
+        return queuePositionRepository.save(queuePosition);
     }
 
     @Override
-    public QueuePosition getPosition(Long tokenId) throws Exception {
-        QueuePosition queuePosition = queueRepository.findByToken_Id(tokenId);
-        if (queuePosition == null) {
-            throw new Exception("not found");
-        }
-        return queuePosition;
+    public QueuePosition getPosition(Long tokenId) {
+        return queuePositionRepository.findByToken_Id(tokenId)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 }

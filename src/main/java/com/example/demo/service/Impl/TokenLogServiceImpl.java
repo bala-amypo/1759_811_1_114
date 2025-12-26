@@ -1,39 +1,37 @@
-package com.example.demo.service.impl;
+package com.example.demo.service;
 
-import com.example.demo.entity.Token;
-import com.example.demo.entity.TokenLog;
+import com.example.demo.model.Token;
+import com.example.demo.model.TokenLog;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.repository.TokenRepository;
-import com.example.demo.service.TokenLogService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class TokenLogServiceImpl implements TokenLogService {
 
-    private final TokenLogRepository logRepository;
+    private final TokenLogRepository tokenLogRepository;
     private final TokenRepository tokenRepository;
 
-    // Constructor Injection
-    public TokenLogServiceImpl(TokenLogRepository logRepository, TokenRepository tokenRepository) {
-        this.logRepository = logRepository;
+    // ✅ Constructor Injection (exact)
+    public TokenLogServiceImpl(TokenLogRepository tokenLogRepository,
+                               TokenRepository tokenRepository) {
+        this.tokenLogRepository = tokenLogRepository;
         this.tokenRepository = tokenRepository;
     }
 
     @Override
-    public TokenLog addLog(Long tokenId, String message) throws Exception {
+    public TokenLog addLog(Long tokenId, String logMessage) {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new Exception("not found"));
+                .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        TokenLog log = new TokenLog(token, message);
-        return logRepository.save(log);
+        TokenLog log = new TokenLog(token, logMessage);
+        return tokenLogRepository.save(log);
     }
 
     @Override
-    public List<TokenLog> getLogs(Long tokenId) throws Exception {
-        if (!tokenRepository.existsById(tokenId)) {
-            throw new Exception("not found");
-        }
-        return logRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
+    public List<TokenLog> getLogs(Long tokenId) {
+        return tokenLogRepository.findByToken_IdOrderByLoggedAtAsc(tokenId);
     }
 }
