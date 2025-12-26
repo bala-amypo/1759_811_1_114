@@ -2,39 +2,28 @@ package com.example.demo.config;
 
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.security.Keys;
-
-import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
-    private final long validityMillis;
-
-    public JwtTokenProvider(String secret, long validityMillis) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.validityMillis = validityMillis;
-    }
+    private final String secret = "ChangeThisSecretKeyReplaceMe1234567890";
+    private final long validityInMs = 3600000; // 1 hour
 
     public String generateToken(Long userId, String email, String role) {
-        long now = System.currentTimeMillis();
-        Date expiry = new Date(now + validityMillis);
-
         return Jwts.builder()
-                .setSubject(userId.toString())
+                .setSubject(String.valueOf(userId))
                 .claim("email", email)
                 .claim("role", role)
-                .setIssuedAt(new Date(now))
-                .setExpiration(expiry)
-                .signWith(key)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + validityInMs))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
@@ -42,6 +31,6 @@ public class JwtTokenProvider {
     }
 
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 }
