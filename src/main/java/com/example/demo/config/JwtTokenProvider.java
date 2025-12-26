@@ -2,11 +2,11 @@ package com.example.demo.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -15,14 +15,14 @@ public class JwtTokenProvider {
     private final Key key;
     private final long validityInMs;
 
-    public JwtTokenProvider(String secretKey, long validityInMs) {
-        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret,
+                            @Value("${jwt.validity}") long validityInMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.validityInMs = validityInMs;
     }
 
-    // Generate token with userId, email, role
     public String generateToken(Long userId, String email, String role) {
-        Map<String, Object> claims = new HashMap<>();
+        Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
         claims.put("email", email);
         claims.put("role", role);
 
@@ -31,14 +31,12 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(String.valueOf(userId))
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -48,8 +46,9 @@ public class JwtTokenProvider {
         }
     }
 
-    // Get claims
     public Claims getClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
