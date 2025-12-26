@@ -1,17 +1,12 @@
-package com.example.project.service;
+package com.example.demo.service;
 
-import com.example.project.entity.ServiceCounter;
+import com.example.demo.model.ServiceCounter;
+
 import java.util.List;
 
 public interface ServiceCounterService {
 
-    ServiceCounter saveServiceCounter(ServiceCounter serviceCounter);
+    ServiceCounter addCounter(ServiceCounter counter);
 
-    List<ServiceCounter> getAllServiceCounter();
-
-    ServiceCounter getServiceCounterById(Long serviceCounterId);
-
-    ServiceCounter updateServiceCounter(ServiceCounter serviceCounter);
-
-    void deleteServiceCounter(Long serviceCounterId);
+    List<ServiceCounter> getActiveCounters();
 }

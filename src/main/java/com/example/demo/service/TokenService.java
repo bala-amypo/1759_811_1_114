@@ -1,15 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Token;
-import java.util.List;
+import com.example.demo.model.Token;
 
 public interface TokenService {
 
-    Token issueToken(Long counterId) throws Exception;
+    Token issueToken(Long counterId);
 
-    Token updateStatus(Long tokenId, Token.Status newStatus) throws Exception;
+    Token updateToken(Long tokenId, String status);
 
-    Token getToken(Long tokenId) throws Exception;
-
-    List<Token> getTokensByCounterAndStatus(Long counterId, Token.Status status);
+    Token getToken(Long tokenId);
 }
