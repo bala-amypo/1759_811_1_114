@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -21,7 +22,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserService userService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider,
+                                   @Lazy UserService userService) { // <- Lazy to break cycle
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
     }
