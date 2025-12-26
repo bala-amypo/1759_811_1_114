@@ -1,33 +1,41 @@
+// src/main/java/com/example/demo/controller/ServiceCounterController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.ServiceCounter;
-import com.example.demo.service.ServiceCounterService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.repository.ServiceCounterRepository;
+import com.example.demo.service.impl.ServiceCounterServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/counters")
+@RequestMapping("/api/counters")
 public class ServiceCounterController {
 
-    private final ServiceCounterService counterService;
+    private final ServiceCounterServiceImpl counterService;
 
-    public ServiceCounterController(ServiceCounterService counterService) {
-        this.counterService = counterService;
+    // Constructor injection: tests instantiate ServiceCounterServiceImpl directly,
+    // but here we wire it with the repository bean.
+    public ServiceCounterController(ServiceCounterRepository repo) {
+        this.counterService = new ServiceCounterServiceImpl(repo);
     }
 
-    // Add a new counter
-    @PostMapping("/add")
-    public ResponseEntity<ServiceCounter> addCounter(@RequestBody ServiceCounter counter) {
-        ServiceCounter saved = counterService.addCounter(counter);
-        return ResponseEntity.ok(saved);
+    /**
+     * Add a new service counter.
+     * Example: POST /api/counters
+     * Body: { "counterName": "C1", "department": "Cardio" }
+     */
+    @PostMapping
+    public ServiceCounter addCounter(@RequestBody ServiceCounter sc) {
+        return counterService.addCounter(sc);
     }
 
-    // Get all active counters
+    /**
+     * Get all active counters.
+     * Example: GET /api/counters/active
+     */
     @GetMapping("/active")
-    public ResponseEntity<List<ServiceCounter>> getActiveCounters() {
-        List<ServiceCounter> list = counterService.getActiveCounters();
-        return ResponseEntity.ok(list);
+    public List<ServiceCounter> getActiveCounters() {
+        return counterService.getActiveCounters();
     }
 }

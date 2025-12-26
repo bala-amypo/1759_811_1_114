@@ -1,30 +1,29 @@
+// src/main/java/com/example/demo/controller/QueueController.java
 package com.example.demo.controller;
 
 import com.example.demo.entity.QueuePosition;
-import com.example.demo.service.QueueService;
-import org.springframework.http.ResponseEntity;
+import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.TokenRepository;
+import com.example.demo.service.impl.QueueServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/queue")
+@RequestMapping("/api/queue")
 public class QueueController {
 
-    private final QueueService queueService;
+    private final QueueServiceImpl queueService;
 
-    public QueueController(QueueService queueService) {
-        this.queueService = queueService;
+    public QueueController(QueuePositionRepository queueRepo, TokenRepository tokenRepo) {
+        this.queueService = new QueueServiceImpl(queueRepo, tokenRepo);
+    }
+
+    @PostMapping("/{tokenId}")
+    public QueuePosition updateQueue(@PathVariable Long tokenId, @RequestParam int position) {
+        return queueService.updateQueuePosition(tokenId, position);
     }
 
     @GetMapping("/{tokenId}")
-    public ResponseEntity<QueuePosition> getPosition(@PathVariable Long tokenId) {
-        QueuePosition qp = queueService.getPosition(tokenId);
-        return ResponseEntity.ok(qp);
-    }
-
-    @PutMapping("/{tokenId}")
-    public ResponseEntity<QueuePosition> updatePosition(@PathVariable Long tokenId,
-                                                        @RequestParam int position) {
-        QueuePosition qp = queueService.updateQueuePosition(tokenId, position);
-        return ResponseEntity.ok(qp);
+    public QueuePosition getQueue(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
     }
 }
