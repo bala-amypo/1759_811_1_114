@@ -15,22 +15,18 @@ public class QueueController {
         this.queueService = queueService;
     }
 
-    @PutMapping("/{tokenId}")
-    public ResponseEntity<QueuePosition> updateQueuePosition(
-            @PathVariable Long tokenId,
-            @RequestParam int position
-    ) {
-        return ResponseEntity.ok(
-                queueService.updateQueuePosition(tokenId, position)
-        );
+    // Update queue position
+    @PutMapping("/{tokenId}/position")
+    public ResponseEntity<QueuePosition> updatePosition(@PathVariable Long tokenId,
+                                                        @RequestParam Integer position) {
+        QueuePosition qp = queueService.updateQueuePosition(tokenId, position);
+        return ResponseEntity.ok(qp);
     }
 
+    // Get queue position for a token
     @GetMapping("/{tokenId}")
-    public ResponseEntity<QueuePosition> getQueuePosition(
-            @PathVariable Long tokenId
-    ) {
-        return ResponseEntity.ok(
-                queueService.getPosition(tokenId)
-        );
+    public ResponseEntity<QueuePosition> getPosition(@PathVariable Long tokenId) {
+        QueuePosition qp = queueService.getPosition(tokenId);
+        return ResponseEntity.ok(qp);
     }
 }
