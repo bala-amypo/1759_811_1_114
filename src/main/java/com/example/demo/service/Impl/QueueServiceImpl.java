@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/service/impl/QueueServiceImpl.java
+// QueueServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.QueuePosition;

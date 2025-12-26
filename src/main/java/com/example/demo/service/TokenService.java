@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/service/TokenService.java
+// TokenService.java
 package com.example.demo.service;
 
 import com.example.demo.entity.Token;

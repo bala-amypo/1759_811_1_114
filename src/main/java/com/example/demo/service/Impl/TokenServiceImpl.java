@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/service/impl/TokenServiceImpl.java
+// TokenServiceImpl.java
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
@@ -32,19 +32,14 @@ public class TokenServiceImpl implements TokenService {
             throw new IllegalArgumentException("Counter not active");
         }
 
-        // Generate sequential token number per counter
-        int nextNumber = generateTokenNumber(counterId);
-
         Token token = new Token();
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        token.setTokenNumber(nextNumber);
+        token.setTokenNumber(counter.getCounterName() + "-" + System.currentTimeMillis()); // String
         token = tokenRepo.save(token);
 
-        // Position is existing waiting count + 1
-        List<Token> waiting = tokenRepo
-            .findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
+        List<Token> waiting = tokenRepo.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
         int pos = waiting.size();
 
         QueuePosition qp = new QueuePosition();
@@ -94,14 +89,5 @@ public class TokenServiceImpl implements TokenService {
         if ("WAITING".equals(from) && ("SERVING".equals(to) || "CANCELLED".equals(to))) return true;
         if ("SERVING".equals(from) && "COMPLETED".equals(to)) return true;
         return false;
-    }
-
-    /**
-     * Generate sequential token number per counter.
-     * Uses the count of existing tokens for that counter + 1.
-     */
-    private int generateTokenNumber(Long counterId) {
-        List<Token> allTokens = tokenRepo.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
-        return allTokens.size() + 1;
     }
 }
