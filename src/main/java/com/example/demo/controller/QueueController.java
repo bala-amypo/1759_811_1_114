@@ -18,6 +18,17 @@ public class QueueController {
 
     @GetMapping
     public List<QueuePosition> getQueue() {
-        return queueService.getQueue();
+        return queueService.getQueue();  // Matches updated service method
+    }
+
+    @GetMapping("/{tokenId}")
+    public QueuePosition getQueuePosition(@PathVariable Long tokenId) {
+        return queueService.getPosition(tokenId);
+    }
+
+    @PutMapping("/{tokenId}/{position}")
+    public QueuePosition updateQueuePosition(@PathVariable Long tokenId,
+                                             @PathVariable int position) {
+        return queueService.updateQueuePosition(tokenId, position);
     }
 }

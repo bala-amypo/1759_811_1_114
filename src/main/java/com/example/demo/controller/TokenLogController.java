@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/logs")
+@RequestMapping("/token-logs")
 public class TokenLogController {
 
     private final TokenLogService logService;
@@ -16,8 +16,13 @@ public class TokenLogController {
         this.logService = logService;
     }
 
+    @PostMapping("/{tokenId}")
+    public TokenLog addLog(@PathVariable Long tokenId, @RequestParam String message) {
+        return logService.addLog(tokenId, message);
+    }
+
     @GetMapping("/{tokenId}")
     public List<TokenLog> getLogs(@PathVariable Long tokenId) {
-        return logService.getLogsByToken(tokenId);
+        return logService.getLogsByToken(tokenId); // Matches updated service method
     }
 }
