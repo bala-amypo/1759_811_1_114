@@ -1,10 +1,9 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Token;
 import com.example.demo.entity.ServiceCounter;
+import com.example.demo.entity.Token;
 import com.example.demo.entity.QueuePosition;
 import com.example.demo.repository.TokenRepository;
-import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenLogRepository;
 import com.example.demo.service.TokenService;
@@ -12,28 +11,29 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    private final TokenRepository tokenRepo;
-    private final ServiceCounterRepository counterRepo;
-    private final TokenLogRepository logRepo;
-    private final QueuePositionRepository queueRepo;
+    private final TokenRepository tokenRepository;
+    private final QueuePositionRepository queueRepository;
+    private final TokenLogRepository logRepository;
+    private final ServiceCounterRepository counterRepository;
 
-    public TokenServiceImpl(TokenRepository tokenRepo,
-                            ServiceCounterRepository counterRepo,
-                            TokenLogRepository logRepo,
-                            QueuePositionRepository queueRepo) {
-        this.tokenRepo = tokenRepo;
-        this.counterRepo = counterRepo;
-        this.logRepo = logRepo;
-        this.queueRepo = queueRepo;
+    public TokenServiceImpl(TokenRepository tokenRepository,
+                            ServiceCounterRepository counterRepository,
+                            TokenLogRepository logRepository,
+                            QueuePositionRepository queueRepository) {
+        this.tokenRepository = tokenRepository;
+        this.counterRepository = counterRepository;
+        this.logRepository = logRepository;
+        this.queueRepository = queueRepository;
     }
 
     @Override
     public Token issueToken(Long counterId) {
-        ServiceCounter counter = counterRepo.findById(counterId)
+        ServiceCounter counter = counterRepository.findById(counterId)
                 .orElseThrow(() -> new RuntimeException("Counter not found"));
 
         if (!counter.getIsActive()) {
@@ -42,71 +42,70 @@ public class TokenServiceImpl implements TokenService {
 
         Token token = new Token();
         token.setServiceCounter(counter);
-        token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
+        token.setStatus("WAITING");
 
-        token = tokenRepo.save(token);
+        // Assign token number (simple example: counterId + timestamp)
+        token.setTokenNumber(counter.getCounterName() + "-" + System.currentTimeMillis());
 
-        // Create queue position
+        Token saved = tokenRepository.save(token);
+
+        // Add queue position
         QueuePosition qp = new QueuePosition();
-        qp.setToken(token);
-        qp.setPosition(tokenRepo.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING").size());
-        queueRepo.save(qp);
+        qp.setToken(saved);
+        qp.setPosition(tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING").size());
+        queueRepository.save(qp);
 
-        // Log creation
-        logRepo.save(tokenLog(token, "Token issued"));
-
-        return token;
+        return saved;
     }
 
     @Override
-    public Token updateStatus(Long tokenId, String status) {
-        Token token = tokenRepo.findById(tokenId)
+    public Token updateStatus(Long tokenId, String newStatus) {
+        Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        String current = token.getStatus();
-        switch (status) {
+        String oldStatus = token.getStatus();
+
+        switch (newStatus) {
             case "SERVING":
-                if (!"WAITING".equals(current)) throw new IllegalArgumentException("Invalid status transition");
+                if (!oldStatus.equals("WAITING")) {
+                    throw new IllegalArgumentException("Invalid status transition");
+                }
                 token.setStatus("SERVING");
                 break;
             case "COMPLETED":
-                if (!"SERVING".equals(current)) throw new IllegalArgumentException("Invalid status transition");
-                token.setStatus("COMPLETED");
-                token.setCompletedAt(LocalDateTime.now());
-                break;
             case "CANCELLED":
-                if ("COMPLETED".equals(current)) throw new IllegalArgumentException("Cannot cancel completed token");
-                token.setStatus("CANCELLED");
+                if (!oldStatus.equals("SERVING") && !oldStatus.equals("WAITING")) {
+                    throw new IllegalArgumentException("Invalid status transition");
+                }
+                token.setStatus(newStatus);
                 token.setCompletedAt(LocalDateTime.now());
                 break;
             default:
-                throw new IllegalArgumentException("Unknown status");
+                throw new IllegalArgumentException("Invalid status");
         }
 
-        token = tokenRepo.save(token);
-        logRepo.save(tokenLog(token, "Status updated to " + status));
+        Token updated = tokenRepository.save(token);
 
-        return token;
+        // Add log entry
+        logRepository.save(new com.example.demo.entity.TokenLog(token, "Status changed to " + newStatus));
+
+        return updated;
     }
 
     @Override
     public Token getToken(Long tokenId) {
-        return tokenRepo.findById(tokenId)
+        return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
     }
 
     @Override
-    public List<Token> getAllTokens() {
-        return tokenRepo.findAll();
+    public Optional<Token> findByTokenNumber(String tokenNumber) {
+        return tokenRepository.findByTokenNumber(tokenNumber);
     }
 
-    // Utility method to create a log entry
-    private com.example.demo.entity.TokenLog tokenLog(Token token, String message) {
-        com.example.demo.entity.TokenLog log = new com.example.demo.entity.TokenLog();
-        log.setToken(token);
-        log.setMessage(message);
-        log.setLoggedAt(LocalDateTime.now());
-        return log;
+    @Override
+    public List<Token> getAllTokens() {
+        return tokenRepository.findAll();
     }
 }
