@@ -9,22 +9,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()  // disable CSRF for simplicity
-            .authorizeHttpRequests()
-                // allow public access to Swagger UI and API docs
-                .requestMatchers(
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html"
-                ).permitAll()
-                // allow public access to AuthController endpoints
-                .requestMatchers("/auth/**").permitAll()
-                // all other endpoints require authentication
-                .anyRequest().authenticated()
-            .and()
-            .httpBasic(); // optional for testing, can be removed if JWT used
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()
+            );
 
         return http.build();
     }
