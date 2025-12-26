@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -11,28 +11,28 @@ public class QueuePosition {
     private Long id;
 
     @OneToOne
+    @JoinColumn(name = "token_id", unique = true)
     private Token token;
 
     private Integer position;
 
     private LocalDateTime updatedAt;
 
-    // ✅ No-args constructor
     public QueuePosition() {
     }
 
-    // 🔹 Getters and Setters (exact names)
+    // -------- Getters & Setters --------
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Token getToken() {
         return token;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setToken(Token token) {
@@ -42,7 +42,7 @@ public class QueuePosition {
     public Integer getPosition() {
         return position;
     }
-
+    
     public void setPosition(Integer position) {
         this.position = position;
     }
@@ -50,7 +50,7 @@ public class QueuePosition {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-
+    
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }

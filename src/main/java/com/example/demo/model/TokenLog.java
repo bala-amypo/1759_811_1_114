@@ -1,4 +1,4 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -11,34 +11,38 @@ public class TokenLog {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "token_id")
     private Token token;
 
     private String logMessage;
 
     private LocalDateTime loggedAt;
 
-    // ✅ No-args constructor
-    public TokenLog() {
-    }
-
-    // ✅ Auto-set timestamp
     @PrePersist
     public void onCreate() {
         this.loggedAt = LocalDateTime.now();
     }
 
-    // 🔹 Getters and Setters (exact names)
+    public TokenLog() {
+    }
+
+    public TokenLog(Token token, String logMessage) {
+        this.token = token;
+        this.logMessage = logMessage;
+    }
+
+    // -------- Getters & Setters --------
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Token getToken() {
         return token;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setToken(Token token) {
@@ -48,16 +52,12 @@ public class TokenLog {
     public String getLogMessage() {
         return logMessage;
     }
-
+    
     public void setLogMessage(String logMessage) {
         this.logMessage = logMessage;
     }
 
     public LocalDateTime getLoggedAt() {
         return loggedAt;
-    }
-
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
     }
 }

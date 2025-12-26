@@ -1,6 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.entity.QueuePosition;
+import com.example.demo.model.QueuePosition;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
