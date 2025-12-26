@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             // ✅ must contain "Email"
-            throw new RuntimeException("Email already exists");
+            throw new RuntimeException("Email");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public User login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 // ✅ must contain "not found"
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             // login failure (message not restricted by spec)
