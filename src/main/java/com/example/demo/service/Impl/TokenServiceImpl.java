@@ -25,9 +25,6 @@ public class TokenServiceImpl {
         this.queueRepository = queueRepository;
     }
 
-    // --------------------
-    // Issue Token
-    // --------------------
     public Token issueToken(Long counterId) {
 
         ServiceCounter counter = counterRepository.findById(counterId)
@@ -41,18 +38,18 @@ public class TokenServiceImpl {
                 tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(
                         counterId, "WAITING");
 
-        int nextNumber = waiting.size() + 1;
+        int position = waiting.size() + 1;
 
         Token token = new Token();
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
-        token.setTokenNumber(counter.getCounterName() + "-" + nextNumber);
+        token.setTokenNumber(counter.getCounterName() + "-" + position);
 
         Token saved = tokenRepository.save(token);
 
         QueuePosition qp = new QueuePosition();
         qp.setToken(saved);
-        qp.setPosition(nextNumber);
+        qp.setPosition(position);
         queueRepository.save(qp);
 
         TokenLog log = new TokenLog();
@@ -63,9 +60,6 @@ public class TokenServiceImpl {
         return saved;
     }
 
-    // --------------------
-    // Update Status
-    // --------------------
     public Token updateStatus(Long tokenId, String newStatus) {
 
         Token token = tokenRepository.findById(tokenId)
@@ -98,9 +92,6 @@ public class TokenServiceImpl {
         return saved;
     }
 
-    // --------------------
-    // Get Token
-    // --------------------
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
