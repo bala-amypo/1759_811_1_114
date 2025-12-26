@@ -23,22 +23,17 @@ public class Token {
 
     // Getters and Setters
     public Long getId() { return id; }
-
     public void setId(Long id) { this.id = id; }
 
     public String getStatus() { return status; }
-
     public void setStatus(String status) { this.status = status; }
 
     public LocalDateTime getIssuedAt() { return issuedAt; }
-
     public void setIssuedAt(LocalDateTime issuedAt) { this.issuedAt = issuedAt; }
 
     public LocalDateTime getCompletedAt() { return completedAt; }
-
     public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
 
     public ServiceCounter getServiceCounter() { return serviceCounter; }
-
     public void setServiceCounter(ServiceCounter serviceCounter) { this.serviceCounter = serviceCounter; }
 }

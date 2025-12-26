@@ -21,16 +21,13 @@ public class QueuePosition {
         this.position = position;
     }
 
-    // Getters and Setters
+    // Getters and setters
     public Long getId() { return id; }
-
     public void setId(Long id) { this.id = id; }
 
     public Token getToken() { return token; }
-
     public void setToken(Token token) { this.token = token; }
 
     public int getPosition() { return position; }
-
     public void setPosition(int position) { this.position = position; }
 }
