@@ -24,9 +24,8 @@ public class AuthController {
     // -------------------------
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        // Set default role if not provided
         if (user.getRole() == null) {
-            user.setRole("STAFF");
+            user.setRole("STAFF"); // default role
         }
         User created = userService.register(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -37,17 +36,18 @@ public class AuthController {
     // -------------------------
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
-        User found = userService.findByEmail(user.getEmail());
+        User found = userService.findByEmail(user.getEmail()); // returns User, not String
         if (found == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email");
         }
 
-        // Check password (assuming userService.register hashes passwords)
+        // check password matches
         if (!userService.checkPassword(user.getPassword(), found.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
         }
 
+        // generate JWT token string
         String token = jwtTokenProvider.generateToken(found.getId(), found.getEmail(), found.getRole());
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok(token); // return String (JWT)
     }
 }
