@@ -13,34 +13,55 @@ public class Token {
     @Column(unique = true)
     private String tokenNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "service_counter_id")
-    private ServiceCounter serviceCounter;
-
     private String status;
 
-    private LocalDateTime issuedAt;
+    private LocalDateTime issuedAt = LocalDateTime.now();
 
     private LocalDateTime completedAt;
 
-    public Token() {
-    }
+    @ManyToOne
+    private ServiceCounter serviceCounter;
 
+    public Token() {}
 
     public Long getId() {
         return id;
-    }
-
-    public String getTokenNumber() {
-        return tokenNumber;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getTokenNumber() {
+        return tokenNumber;
+    }
+
     public void setTokenNumber(String tokenNumber) {
         this.tokenNumber = tokenNumber;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getIssuedAt() {
+        return issuedAt;
+    }
+
+    public void setIssuedAt(LocalDateTime issuedAt) {
+        this.issuedAt = issuedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 
     public ServiceCounter getServiceCounter() {
@@ -49,29 +70,5 @@ public class Token {
 
     public void setServiceCounter(ServiceCounter serviceCounter) {
         this.serviceCounter = serviceCounter;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getIssuedAt() {
-        return issuedAt;
-    }
-    
-    public void setIssuedAt(LocalDateTime issuedAt) {
-        this.issuedAt = issuedAt;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-    
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
     }
 }

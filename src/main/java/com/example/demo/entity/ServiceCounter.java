@@ -15,27 +15,18 @@ public class ServiceCounter {
 
     private Boolean isActive = true;
 
-    public ServiceCounter() {
-    }
-
-    public ServiceCounter(String counterName, String department, Boolean isActive) {
-        this.counterName = counterName;
-        this.department = department;
-        this.isActive = isActive;
-    }
-
-   
+    public ServiceCounter() {}
 
     public Long getId() {
         return id;
     }
 
-    public String getCounterName() {
-        return counterName;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCounterName() {
+        return counterName;
     }
 
     public void setCounterName(String counterName) {
@@ -45,7 +36,7 @@ public class ServiceCounter {
     public String getDepartment() {
         return department;
     }
-    
+
     public void setDepartment(String department) {
         this.department = department;
     }
@@ -53,8 +44,8 @@ public class ServiceCounter {
     public Boolean getIsActive() {
         return isActive;
     }
-    
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
     }
 }
