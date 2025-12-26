@@ -1,18 +1,17 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Token;
-import com.example.demo.entity.QueuePosition;
 import com.example.demo.entity.ServiceCounter;
-import com.example.demo.repository.TokenRepository;
-import com.example.demo.repository.ServiceCounterRepository;
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.repository.TokenLogRepository;
+import com.example.demo.repository.TokenRepository;
 import com.example.demo.repository.QueuePositionRepository;
+import com.example.demo.repository.ServiceCounterRepository;
 import com.example.demo.service.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -38,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
                 .orElseThrow(() -> new RuntimeException("Counter not found"));
 
         if (!counter.getIsActive()) {
-            throw new IllegalArgumentException("Counter not active");
+            throw new IllegalArgumentException("Counter is not active");
         }
 
         Token token = new Token();
@@ -48,10 +47,10 @@ public class TokenServiceImpl implements TokenService {
 
         token = tokenRepository.save(token);
 
-        // Add queue position
+        // Queue position
         QueuePosition qp = new QueuePosition();
         qp.setToken(token);
-        qp.setPosition(1); // simplified for test simulation
+        qp.setPosition(tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING").size());
         queueRepository.save(qp);
 
         return token;
@@ -62,11 +61,10 @@ public class TokenServiceImpl implements TokenService {
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
-        // Status transitions
+        // Simple valid transition rules
         if (status.equals("SERVING") && !token.getStatus().equals("WAITING")) {
             throw new IllegalArgumentException("Invalid status transition");
         }
-
         if (status.equals("COMPLETED") && !token.getStatus().equals("SERVING")) {
             throw new IllegalArgumentException("Invalid status transition");
         }
@@ -76,7 +74,7 @@ public class TokenServiceImpl implements TokenService {
             token.setCompletedAt(LocalDateTime.now());
         }
 
-        tokenRepository.save(token);
+        token = tokenRepository.save(token);
         return token;
     }
 
@@ -87,7 +85,13 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Optional<Token> findByTokenNumber(String tokenNumber) {
-        return tokenRepository.findByTokenNumber(tokenNumber);
+    public Token getTokenByNumber(String tokenNumber) {
+        return tokenRepository.findByTokenNumber(tokenNumber)
+                .orElseThrow(() -> new RuntimeException("Token not found"));
+    }
+
+    @Override
+    public List<Token> getWaitingTokens(Long counterId) {
+        return tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");
     }
 }
