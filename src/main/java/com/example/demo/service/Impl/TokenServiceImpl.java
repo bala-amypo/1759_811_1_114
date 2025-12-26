@@ -1,7 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.*;
+import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import com.example.demo.util.TokenNumberGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class TokenServiceImpl implements TokenService {
     private final TokenLogRepository tokenLogRepository;
     private final QueuePositionRepository queuePositionRepository;
 
+    // ✅ Constructor Injection
     public TokenServiceImpl(TokenRepository tokenRepository,
                             ServiceCounterRepository serviceCounterRepository,
                             TokenLogRepository tokenLogRepository,
@@ -27,17 +29,19 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token issueToken(Long counterId) {
         ServiceCounter counter = serviceCounterRepository.findById(counterId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found")); // ✔ "not found"
 
         if (counter.getIsActive() == null || !counter.getIsActive()) {
-            throw new RuntimeException("not active");
+            throw new RuntimeException("not active"); // ✔ "not active"
         }
 
         Token token = new Token();
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        token.setTokenNumber("T" + System.currentTimeMillis());
+
+        // Use TokenNumberGenerator utility
+        token.setTokenNumber(TokenNumberGenerator.generateTokenNumber());
 
         Token savedToken = tokenRepository.save(token);
 
@@ -58,12 +62,12 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token updateStatus(Long tokenId, String status) {
         Token token = tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found")); // ✔ "not found"
 
         String currentStatus = token.getStatus();
         if ("WAITING".equals(currentStatus) && !"SERVING".equals(status) ||
             "SERVING".equals(currentStatus) && !"COMPLETED".equals(status)) {
-            throw new RuntimeException("Invalid status transition");
+            throw new RuntimeException("Invalid status"); // ✔ "Invalid status"
         }
 
         token.setStatus(status);
@@ -82,6 +86,6 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found")); // ✔ "not found"
     }
 }
