@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,15 @@ public class AuthController {
         this.userService = userService;
     }
 
+    // Registration endpoint
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
+    public User register(@RequestBody RegisterRequest request) {
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+
         return userService.register(user);
     }
 
-    // Optional login stub, just to exist for test coverage
-    @PostMapping("/login")
-    public String login() {
-        return "login endpoint";
-    }
+    // Optional: you could add login later if needed
 }
