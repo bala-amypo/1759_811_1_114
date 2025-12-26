@@ -1,13 +1,5 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.QueuePosition;
-import com.example.demo.repository.QueuePositionRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-
 @Service
-public class QueueServiceImpl {
+public class QueueServiceImpl implements QueueService {
 
     private final QueuePositionRepository repository;
 
@@ -15,6 +7,7 @@ public class QueueServiceImpl {
         this.repository = repository;
     }
 
+    @Override
     public List<QueuePosition> getQueue() {
         return repository.findAll();
     }

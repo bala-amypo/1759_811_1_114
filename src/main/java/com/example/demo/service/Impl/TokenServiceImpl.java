@@ -1,14 +1,5 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Service
-public class TokenServiceImpl {
+public class TokenServiceImpl implements TokenService {
 
     private final TokenRepository tokenRepository;
     private final ServiceCounterRepository counterRepository;
@@ -25,8 +16,8 @@ public class TokenServiceImpl {
         this.queueRepository = queueRepository;
     }
 
+    @Override
     public Token issueToken(Long counterId) {
-
         ServiceCounter counter = counterRepository.findById(counterId)
                 .orElseThrow(() -> new RuntimeException("Counter not found"));
 
@@ -34,11 +25,9 @@ public class TokenServiceImpl {
             throw new IllegalArgumentException("Counter not active");
         }
 
-        List<Token> waiting =
-                tokenRepository.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(
-                        counterId, "WAITING");
-
-        int position = waiting.size() + 1;
+        int position = tokenRepository
+                .findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING")
+                .size() + 1;
 
         Token token = new Token();
         token.setServiceCounter(counter);
@@ -60,8 +49,8 @@ public class TokenServiceImpl {
         return saved;
     }
 
+    @Override
     public Token updateStatus(Long tokenId, String newStatus) {
-
         Token token = tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
 
@@ -70,7 +59,7 @@ public class TokenServiceImpl {
         boolean valid =
                 (current.equals("WAITING") && newStatus.equals("SERVING")) ||
                 (current.equals("SERVING") && newStatus.equals("COMPLETED")) ||
-                (newStatus.equals("CANCELLED"));
+                newStatus.equals("CANCELLED");
 
         if (!valid || (current.equals("WAITING") && newStatus.equals("COMPLETED"))) {
             throw new IllegalArgumentException("Invalid status transition");
@@ -92,6 +81,7 @@ public class TokenServiceImpl {
         return saved;
     }
 
+    @Override
     public Token getToken(Long tokenId) {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(() -> new RuntimeException("Token not found"));
