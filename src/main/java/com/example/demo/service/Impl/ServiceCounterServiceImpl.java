@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.ServiceCounter;
+import com.example.demo.entity.ServiceCounter;
 import com.example.demo.repository.ServiceCounterRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.QueuePosition;
+import com.example.demo.entity.QueuePosition;
 import com.example.demo.repository.QueuePositionRepository;
 import com.example.demo.repository.TokenRepository;
 import org.springframework.stereotype.Service;
