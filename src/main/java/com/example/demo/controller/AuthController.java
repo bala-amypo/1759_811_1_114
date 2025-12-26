@@ -4,9 +4,11 @@ import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import com.example.demo.config.JwtTokenProvider;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     private final UserService userService;
@@ -17,36 +19,35 @@ public class AuthController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // ---------------------------
-    // Register endpoint
-    // ---------------------------
+    // -------------------------
+    // Register user
+    // -------------------------
     @PostMapping("/register")
-    public User register(@RequestParam String name,
-                         @RequestParam String email,
-                         @RequestParam String password) {
-
-        User u = new User();
-        u.setName(name);
-        u.setEmail(email);
-        u.setPassword(password);
-        u.setRole("STAFF"); // default role
-
-        return userService.register(u);
+    public ResponseEntity<User> register(@RequestBody User user) {
+        // Set default role if not provided
+        if (user.getRole() == null) {
+            user.setRole("STAFF");
+        }
+        User created = userService.register(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // ---------------------------
-    // Login endpoint
-    // ---------------------------
+    // -------------------------
+    // Login
+    // -------------------------
     @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password) {
-
-        User u = userService.findByEmail(email);
-
-        if (u == null || !userService.checkPassword(u, password)) {
-            throw new RuntimeException("Invalid credentials");
+    public ResponseEntity<String> login(@RequestBody User user) {
+        User found = userService.findByEmail(user.getEmail());
+        if (found == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email");
         }
 
-        return jwtTokenProvider.generateToken(u.getId(), u.getEmail(), u.getRole());
+        // Check password (assuming userService.register hashes passwords)
+        if (!userService.checkPassword(user.getPassword(), found.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
+        }
+
+        String token = jwtTokenProvider.generateToken(found.getId(), found.getEmail(), found.getRole());
+        return ResponseEntity.ok(token);
     }
 }
