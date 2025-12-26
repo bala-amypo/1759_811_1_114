@@ -17,38 +17,50 @@ public class TokenController {
         this.tokenService = tokenService;
     }
 
-    /**
-     * CREATE TOKEN
-     * Visible in Swagger
-     */
-    @PostMapping
-    public ResponseEntity<Token> createToken(
-            @RequestParam Long userId,
-            @RequestParam Long counterId
-    ) {
-        return ResponseEntity.ok(
-                tokenService.generateToken(userId, counterId)
-        );
+    // ------------------------------
+    // Issue token for a counter
+    // ------------------------------
+    @PostMapping("/issue/{counterId}")
+    public ResponseEntity<Token> issueToken(@PathVariable Long counterId) {
+        Token token = tokenService.issueToken(counterId);
+        return ResponseEntity.ok(token);
     }
 
-    /**
-     * GET ALL TOKENS
-     */
-    @GetMapping
+    // ------------------------------
+    // Generate token (used by tests)
+    // ------------------------------
+    @PostMapping("/generate/{userId}/{counterId}")
+    public ResponseEntity<Token> generateToken(@PathVariable Long userId,
+                                               @PathVariable Long counterId) {
+        Token token = tokenService.generateToken(userId, counterId);
+        return ResponseEntity.ok(token);
+    }
+
+    // ------------------------------
+    // Update token status
+    // ------------------------------
+    @PutMapping("/{tokenId}/status")
+    public ResponseEntity<Token> updateStatus(@PathVariable Long tokenId,
+                                              @RequestParam String status) {
+        Token updated = tokenService.updateStatus(tokenId, status);
+        return ResponseEntity.ok(updated);
+    }
+
+    // ------------------------------
+    // Get token by ID
+    // ------------------------------
+    @GetMapping("/{tokenId}")
+    public ResponseEntity<Token> getToken(@PathVariable Long tokenId) {
+        Token token = tokenService.getToken(tokenId);
+        return ResponseEntity.ok(token);
+    }
+
+    // ------------------------------
+    // Get all tokens (used by tests)
+    // ------------------------------
+    @GetMapping("/all")
     public ResponseEntity<List<Token>> getAllTokens() {
-        return ResponseEntity.ok(tokenService.getAllTokens());
-    }
-
-    /**
-     * UPDATE TOKEN STATUS
-     */
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Token> updateStatus(
-            @PathVariable Long id,
-            @RequestParam String status
-    ) {
-        return ResponseEntity.ok(
-                tokenService.updateStatus(id, status)
-        );
+        List<Token> tokens = tokenService.getAllTokens();
+        return ResponseEntity.ok(tokens);
     }
 }
