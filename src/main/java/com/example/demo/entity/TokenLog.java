@@ -31,7 +31,7 @@ public class TokenLog {
         this.logMessage = logMessage;
     }
 
-    // -------- Getters & Setters --------
+
 
     public Long getId() {
         return id;

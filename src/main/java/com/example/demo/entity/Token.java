@@ -26,7 +26,6 @@ public class Token {
     public Token() {
     }
 
-    // -------- Getters & Setters --------
 
     public Long getId() {
         return id;

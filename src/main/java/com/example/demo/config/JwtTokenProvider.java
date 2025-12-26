@@ -11,8 +11,8 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String JWT_SECRET = "MySecretKey"; // replace with strong secret
-    private final long JWT_EXPIRATION = 86400000; // 1 day
+    private final String JWT_SECRET = "MySecretKey"; 
+    private final long JWT_EXPIRATION = 86400000; 
 
     public String generateToken(User user) {
         Date now = new Date();

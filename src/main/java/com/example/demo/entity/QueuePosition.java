@@ -21,7 +21,7 @@ public class QueuePosition {
     public QueuePosition() {
     }
 
-    // -------- Getters & Setters --------
+  
 
     public Long getId() {
         return id;

@@ -24,7 +24,7 @@ public class ServiceCounter {
         this.isActive = isActive;
     }
 
-    // -------- Getters & Setters --------
+   
 
     public Long getId() {
         return id;

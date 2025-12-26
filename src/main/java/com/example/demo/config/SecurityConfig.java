@@ -24,7 +24,7 @@ public class SecurityConfig {
             .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .anyRequest().authenticated()
             .and()
-            .httpBasic(); // can be replaced with JWT filter if needed
+            .httpBasic(); 
 
         return http.build();
     }
