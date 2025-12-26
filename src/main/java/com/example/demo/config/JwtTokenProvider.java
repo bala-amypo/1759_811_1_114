@@ -17,7 +17,7 @@ public class JwtTokenProvider {
     // Generate JWT token
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userid", user.getUserid()); // make sure User entity has getUserid()
+        claims.put("userid", user.getId()); // make sure User entity has getUserid()
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
 
