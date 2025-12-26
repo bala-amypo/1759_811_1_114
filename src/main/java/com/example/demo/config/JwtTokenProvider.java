@@ -14,10 +14,10 @@ public class JwtTokenProvider {
     private final String secretKey = "YourSecretKey12345"; // replace with secure key
     private final long validityInMilliseconds = 3600000; // 1 hour
 
-    // Generate JWT token including userid, email, role
+    // Generate JWT token
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userid", user.getUserid());
+        claims.put("userid", user.getUserid()); // make sure User entity has getUserid()
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
 
