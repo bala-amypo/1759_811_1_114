@@ -14,9 +14,10 @@ public class JwtTokenProvider {
     private final String secretKey = "YourSecretKey12345"; // replace with secure key
     private final long validityInMilliseconds = 3600000; // 1 hour
 
+    // Generate JWT token including userid, email, role
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userid", user.getUserid()); // matches entity
+        claims.put("userid", user.getUserid());
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
 
@@ -29,6 +30,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // Extract email from token
     public String getEmailFromToken(String token) {
         return getAllClaimsFromToken(token).get("email", String.class);
     }
@@ -40,6 +42,7 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
+    // Validate token
     public boolean validateToken(String token) {
         try {
             Claims claims = getAllClaimsFromToken(token);
@@ -49,6 +52,7 @@ public class JwtTokenProvider {
         }
     }
 
+    // Validate token for a specific user
     public boolean validateToken(String token, User user) {
         String email = getEmailFromToken(token);
         return email.equals(user.getEmail()) && validateToken(token);

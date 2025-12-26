@@ -3,7 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.RegisterRequest;
-import com.example.demo.dto.ApiResponse;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
-    public ResponseEntity<ApiResponse<String>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -35,14 +35,12 @@ public class AuthController {
         User registeredUser = userService.register(user);
         String token = jwtTokenProvider.generateToken(registeredUser);
 
-        return ResponseEntity.ok(
-                new ApiResponse<>("User registered successfully. Token generated: " + token, null)
-        );
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
     @PostMapping("/login")
     @Operation(summary = "Login and get JWT token")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         User user = userService.findByEmail(request.getEmail());
 
         // Validate password
@@ -51,9 +49,6 @@ public class AuthController {
         }
 
         String token = jwtTokenProvider.generateToken(user);
-
-        return ResponseEntity.ok(
-                new ApiResponse<>("Login successful. Token: " + token, null)
-        );
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
