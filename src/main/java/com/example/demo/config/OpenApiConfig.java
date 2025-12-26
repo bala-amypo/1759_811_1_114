@@ -17,9 +17,9 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
-                        new Server().url("https://9326.pro604cr.amypo.ai/") // project URL
+                        new Server().url("https://9326.pro604cr.amypo.ai/") 
                 ))
-                // Add JWT Bearer security scheme
+                
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth",
                                 new SecurityScheme()
@@ -28,7 +28,7 @@ public class OpenApiConfig {
                                         .bearerFormat("JWT")
                         )
                 )
-                // Apply security globally
+        
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
 }
