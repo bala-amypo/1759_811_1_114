@@ -1,4 +1,4 @@
-// TokenServiceImpl.java
+
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
@@ -36,7 +36,7 @@ public class TokenServiceImpl implements TokenService {
         token.setServiceCounter(counter);
         token.setStatus("WAITING");
         token.setIssuedAt(LocalDateTime.now());
-        token.setTokenNumber(counter.getCounterName() + "-" + System.currentTimeMillis()); // String
+        token.setTokenNumber(counter.getCounterName() + "-" + System.currentTimeMillis());
         token = tokenRepo.save(token);
 
         List<Token> waiting = tokenRepo.findByServiceCounter_IdAndStatusOrderByIssuedAtAsc(counterId, "WAITING");

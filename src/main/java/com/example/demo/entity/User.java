@@ -1,4 +1,4 @@
-// User.java
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -14,9 +14,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // keep simple: tests only check email+password
-    // no name/role required for tests
-
+  
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }
