@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/controller/QueueController.java
+
 package com.example.demo.controller;
 
 import com.example.demo.entity.QueuePosition;

@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/config/OpenApiConfig.java
+
 package com.example.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
@@ -29,7 +29,7 @@ public class OpenApiConfig {
                                         .bearerFormat("JWT")
                         )
                 )
-                // Apply BearerAuth globally so "Authorize" appears
+           
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
 }

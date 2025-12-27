@@ -1,4 +1,4 @@
-// Token.java
+
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ public class Token {
     private Long id;
 
     @Column(unique = true)
-    private String tokenNumber;   // String, as tests expect
+    private String tokenNumber; 
 
     private String status;
     private LocalDateTime issuedAt;
@@ -19,7 +19,7 @@ public class Token {
     @ManyToOne
     private ServiceCounter serviceCounter;
 
-    // getters/setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTokenNumber() { return tokenNumber; }

@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/config/SecurityConfig.java
+
 package com.example.demo.config;
 
 import jakarta.servlet.FilterChain;
@@ -23,7 +23,7 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-  // Use same secret and validity that tests use
+
   private final JwtTokenProvider jwt = new JwtTokenProvider(
     "ChangeThisSecretKeyReplaceMe1234567890", 3600000);
 
@@ -31,14 +31,14 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
       .authorizeHttpRequests(auth -> auth
-        // Public endpoints: auth + swagger
+   
         .requestMatchers("/api/auth/**").permitAll()
         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-        // Everything else requires JWT
+      
         .anyRequest().authenticated()
       )
       .addFilterBefore(new JwtAuthFilter(jwt), UsernamePasswordAuthenticationFilter.class)
-      .httpBasic(Customizer.withDefaults()); // not used; no login page or basic auth
+      .httpBasic(Customizer.withDefaults()); 
 
     return http.build();
   }
