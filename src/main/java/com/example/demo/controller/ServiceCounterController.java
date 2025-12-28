@@ -1,30 +1,36 @@
-
 package com.example.demo.controller;
 
 import com.example.demo.entity.ServiceCounter;
-import com.example.demo.repository.ServiceCounterRepository;
-import com.example.demo.service.impl.ServiceCounterServiceImpl;
+import com.example.demo.service.ServiceCounterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/counters")
+@RequestMapping("/counters")
+@Tag(name = "Service Counters", description = "Service counter management")
+@SecurityRequirement(name = "bearerAuth")
 public class ServiceCounterController {
+    private final ServiceCounterService counterService;
 
-    private final ServiceCounterServiceImpl counterService;
-
-    public ServiceCounterController(ServiceCounterRepository repo) {
-        this.counterService = new ServiceCounterServiceImpl(repo);
+    public ServiceCounterController(ServiceCounterService counterService) {
+        this.counterService = counterService;
     }
 
-    @PostMapping
-    public ServiceCounter add(@RequestBody ServiceCounter sc) {
-        return counterService.addCounter(sc);
+    @PostMapping("/")
+    @Operation(summary = "Add new counter", description = "Create a new service counter")
+    @ApiResponse(responseCode = "200", description = "Counter created successfully")
+    public ServiceCounter addCounter(@RequestBody ServiceCounter counter) {
+        return counterService.addCounter(counter);
     }
 
     @GetMapping("/active")
-    public List<ServiceCounter> active() {
+    @Operation(summary = "Get active counters", description = "Retrieve all active service counters")
+    @ApiResponse(responseCode = "200", description = "Active counters retrieved successfully")
+    public List<ServiceCounter> getActiveCounters() {
         return counterService.getActiveCounters();
     }
 }
